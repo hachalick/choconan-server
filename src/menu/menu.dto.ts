@@ -40,6 +40,12 @@ export class AddProductMenuDto {
 
   @ApiProperty({ type: String, default: '' })
   src: string;
+
+  @ApiProperty({ type: String, default: '' })
+  snap: string;
+
+  @ApiProperty({ type: String, default: '' })
+  tapsi: string;
 }
 
 export class AddEconomicPackage {

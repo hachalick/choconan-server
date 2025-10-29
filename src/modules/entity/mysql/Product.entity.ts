@@ -94,6 +94,22 @@ export class ProductMenuEntity {
   })
   src: string;
 
+  @Column({
+    type: 'text',
+    nullable: true,
+    unique: false,
+    charset: 'utf8',
+  })
+  snap: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+    unique: false,
+    charset: 'utf8',
+  })
+  tapsi: string;
+
   @ManyToOne(
     () => CategoryProductMenuEntity,
     (categoryProduct) => categoryProduct.products,

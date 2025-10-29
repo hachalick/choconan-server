@@ -124,6 +124,8 @@ export class MenuController {
       price,
       src,
       waiting,
+      snap,
+      tapsi,
     } = body;
     return this.menuService.addProductMenu({
       available,
@@ -136,6 +138,8 @@ export class MenuController {
       price,
       src,
       waiting,
+      snap,
+      tapsi,
     });
   }
 
@@ -157,6 +161,8 @@ export class MenuController {
       price,
       src,
       waiting,
+      snap,
+      tapsi,
     } = body;
     return this.menuService.updateProductMenu({
       product_id,
@@ -169,6 +175,8 @@ export class MenuController {
       price,
       src,
       waiting,
+      snap,
+      tapsi,
     });
   }
 

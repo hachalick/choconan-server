@@ -86,6 +86,8 @@ export class MenuService {
         src,
         waiting,
         categoryProductMenu,
+        snap,
+        tapsi,
       } = allProductMenu[i];
       const weight_product = {
         meta_title: 0,
@@ -128,6 +130,8 @@ export class MenuService {
           src,
           waiting,
           category: categoryProductMenu.category,
+          snap,
+          tapsi,
         });
     }
     listSearch.sort((a, b) => b.rank - a.rank);
@@ -191,6 +195,8 @@ export class MenuService {
     available,
     category_id,
     meta_title,
+    snap,
+    tapsi,
   }: TProductMenu & { category_id: string }) {
     const findCategory = await this.categoryProductMenuRepository.findOne({
       where: { category_product_id: category_id },
@@ -207,6 +213,8 @@ export class MenuService {
       waiting,
       meta_title,
       categoryProductMenu: findCategory,
+      snap,
+      tapsi,
     });
     await this.productMenuRepository.save(newProduct);
     return { add: true };
@@ -223,6 +231,8 @@ export class MenuService {
     product_id,
     src,
     waiting,
+    snap,
+    tapsi,
   }: TProductMenu & { product_id: string }) {
     await this.productMenuRepository.update(
       {
@@ -238,6 +248,8 @@ export class MenuService {
         price,
         src,
         waiting,
+        snap,
+        tapsi,
       },
     );
     return { update: true };
@@ -463,6 +475,4 @@ export class MenuService {
   }
 
   //#endregion
-
-
 }

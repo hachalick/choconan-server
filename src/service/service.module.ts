@@ -4,9 +4,13 @@ import { ServiceService } from './service.service';
 import { JwtModule } from 'src/modules/jwt/jwt.module';
 import { UserEntity } from 'src/modules/entity/mysql/User.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductMenuEntity } from 'src/modules/entity/mysql/Product.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity]), JwtModule],
+  imports: [
+    TypeOrmModule.forFeature([UserEntity, ProductMenuEntity]),
+    JwtModule,
+  ],
   controllers: [ServiceController],
   providers: [ServiceService],
   exports: [ServiceService],
