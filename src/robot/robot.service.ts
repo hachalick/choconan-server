@@ -51,9 +51,11 @@ export class RobotService {
 
   public async sendMessageToAdminChat(text: string) {
     this.list_id_admin.forEach(async (id_admin) => {
-      await this.bot.telegram.sendMessage(id_admin, text, {
-        parse_mode: 'Markdown',
-      });
+      try {
+        await this.bot.telegram.sendMessage(id_admin, text);
+      } catch (ex) {
+        console.log(ex);
+      }
     });
   }
 
@@ -71,13 +73,14 @@ export class RobotService {
           first_name?: string;
           username?: string;
         };
-        await this.bot.telegram.sendMessage(
-          id_admin,
-          `آیدی\n ${id}\n\n نام کاربری\n "${first_name}"\n\n یوزر\n "${username}"\n\n شروع به کار با ربات کرد.`,
-          {
-            parse_mode: 'Markdown',
-          },
-        );
+        try {
+          await this.bot.telegram.sendMessage(
+            id_admin,
+            `آیدی\n ${id}\n\n نام کاربری\n "${first_name}"\n\n یوزر\n "${username}"\n\n شروع به کار با ربات کرد.`,
+          );
+        } catch (ex) {
+          console.log(ex);
+        }
       });
     });
   }
