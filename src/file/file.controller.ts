@@ -54,7 +54,7 @@ export class FileController {
     return this.fileService.uploadFileExcel({ file });
   }
 
-  @Get('get-images')
+  @Get('image')
   getImages() {
     return this.fileService.getImages();
   }

@@ -158,11 +158,7 @@ export class ResetPasswordGuard implements CanActivate {
 
 @Injectable()
 export class ExistTokenInParamGuard implements CanActivate {
-  constructor(
-    private readonly jwtService: JwtService,
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
-  ) {}
+  constructor(private readonly jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -389,6 +385,14 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         (route.startsWith('/order/status-table/') &&
           method === 'delete' &&
           this.isAccess(user, EDashboardCapability.DELETE_ORDER_LOCATION));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/order/order') &&
+          method === 'get' &&
+          this.isAccess(user, EDashboardCapability.CREATE_ORDER));
 
       if (isAccess) return isAccess;
 

@@ -11,12 +11,14 @@ import { digitsEnToFa } from '@persian-tools/persian-tools';
 @Injectable()
 export class RobotService {
   private readonly bot: Telegraf;
+  private readonly list_id_admin: string[];
 
   constructor(
     private configService: ConfigService,
     @InjectRepository(CategoryProductMenuEntity)
     private readonly categoryProductMenuRepository: Repository<CategoryProductMenuEntity>,
   ) {
+    this.list_id_admin = this.configService.get<string[]>('Tel.list_id_admin');
     const token = this.configService.get('Tel.token');
     this.bot = new Telegraf(token);
     this.start();
@@ -47,7 +49,15 @@ export class RobotService {
     this.launch();
   }
 
-  async launch() {
+  public async sendMessageToAdminChat(text: string) {
+    this.list_id_admin.forEach(async (id_admin) => {
+      await this.bot.telegram.sendMessage(id_admin, text, {
+        parse_mode: 'Markdown',
+      });
+    });
+  }
+
+  private async launch() {
     await this.bot.launch();
   }
 
@@ -55,6 +65,20 @@ export class RobotService {
     this.bot.start(async (ctx) => {
       ctx.reply('سلام من ربات شوکونان هستم');
       await this.replayHelp(ctx);
+      this.list_id_admin.forEach(async (id_admin) => {
+        const { id, first_name, username } = ctx.chat as {
+          id: number;
+          first_name?: string;
+          username?: string;
+        };
+        await this.bot.telegram.sendMessage(
+          id_admin,
+          `آیدی\n ${id}\n\n نام کاربری\n "${first_name}"\n\n یوزر\n "${username}"\n\n شروع به کار با ربات کرد.`,
+          {
+            parse_mode: 'Markdown',
+          },
+        );
+      });
     });
   }
 

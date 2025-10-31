@@ -59,6 +59,8 @@ export class FileService {
           price,
           src,
           waiting,
+          snap,
+          tapsi,
         } = allMenu[i].products[j];
         await this.menuService.addProductMenu({
           available,
@@ -71,6 +73,8 @@ export class FileService {
           price,
           src,
           waiting,
+          snap,
+          tapsi,
         });
       }
     }
@@ -93,13 +97,16 @@ export class FileService {
         ? join(dir_img, `${file.originalname}`)
         : join(`${file.originalname}`);
       const findImage = await this.imageRepository.findOne({
-        where: { dir: dirFile.replaceAll('\\', '/') },
+        where: { dir: '/' + dirFile.replaceAll('\\', '/') },
       });
       const pathFile = join(process.cwd(), 'public', dirFile);
-      writeFileSync(pathFile, file.buffer);
+      const uint8Array = new Uint8Array(file.buffer);
+      writeFileSync(pathFile, uint8Array);
       !findImage &&
         (await this.imageRepository.save(
-          this.imageRepository.create({ dir: '/' + dirFile.replaceAll('\\', '/') }),
+          this.imageRepository.create({
+            dir: '/' + dirFile.replaceAll('\\', '/'),
+          }),
         ));
       return {
         upload: true,
@@ -124,12 +131,6 @@ export class FileService {
       return {
         delete: true,
       };
-    } 
-    // else {
-    //   throw new HttpException(
-    //     EMessageHttpException.IMAGE_NOT_DELETE,
-    //     HttpStatus.INTERNAL_SERVER_ERROR,
-    //   );
-    // }
+    }
   }
 }

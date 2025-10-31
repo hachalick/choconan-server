@@ -7,20 +7,27 @@ import {
   Between,
   IsNull,
   LessThanOrEqual,
+  Like,
   MoreThan,
   MoreThanOrEqual,
   Not,
+  Raw,
   Repository,
 } from 'typeorm';
 import { FactorEntity } from 'src/modules/entity/mysql/Factor.entity';
 import { FactorItemEntity } from 'src/modules/entity/mysql/FactorItem.entity';
 import * as moment from 'moment-jalaali';
+import { JwtService } from 'src/modules/jwt/jwt.service';
+import { UserEntity } from 'src/modules/entity/mysql/User.entity';
+import { RobotService } from 'src/robot/robot.service';
 
 @Injectable()
 export class OrderService {
   private _counterFactor = 1;
 
   constructor(
+    private readonly jwtService: JwtService,
+    private readonly robotService: RobotService,
     @InjectRepository(ProductMenuEntity)
     private readonly productMenuRepository: Repository<ProductMenuEntity>,
     @InjectRepository(PresentOrderTableEntity)
@@ -31,6 +38,8 @@ export class OrderService {
     private readonly factorRepository: Repository<FactorEntity>,
     @InjectRepository(FactorItemEntity)
     private readonly factorItemRepository: Repository<FactorItemEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   //#region table
@@ -143,6 +152,11 @@ export class OrderService {
       },
       { busy: true },
     );
+
+    await this.robotService.sendMessageToAdminChat(
+      `سفارش جدید برای میز ${(await this.presentOrderTableRepository.findOne({ where: { present_order_table_id: table_id } })).table} ایجاد شد.`,
+    );
+
     const resTable = await this.presentOrderTableRepository.findOne({
       where: { present_order_table_id: table_id },
       relations: { factorPresentOrderTable: true },
@@ -170,6 +184,20 @@ export class OrderService {
   //#endregion
 
   //#region order
+  async historyOrderAccount({ token }: { token: string }) {
+    const prop = await this.jwtService.verifyAccessToken(token);
+    const phone = prop.phone as string | undefined;
+    if (phone) {
+      this.factorRepository.find({
+        where: {
+          factor_number: Raw(
+            (alias) => `CAST(${alias} AS TEXT) LIKE '%${phone}%'`,
+          ),
+        },
+      });
+    }
+  }
+
   async getOneOrder({ factor_id }: { factor_id: string }) {
     const res = await this.factorRepository.findOne({
       where: { factor_id },

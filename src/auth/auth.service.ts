@@ -25,15 +25,13 @@ export class AuthService {
   ) {}
 
   async setDefaultDb() {
-    const key = this.configService.get('App.token_hash_password');
-    const password = hashPassword('1234', key);
     const national_code = '98';
 
     //#region createUser and addUser
 
     await this.userService.createRole('پشتیبان');
     await this.userService.createUser({
-      password,
+      password: '1234',
       national_code,
       phone: '9353790881',
     });

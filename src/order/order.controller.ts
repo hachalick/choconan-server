@@ -1,4 +1,7 @@
-import { CheckDashboardCapabilityGuard } from './../auth/auth.guard';
+import {
+  CheckDashboardCapabilityGuard,
+  ExistTokenInParamGuard,
+} from './../auth/auth.guard';
 import {
   Body,
   Controller,
@@ -115,11 +118,19 @@ export class OrderController {
 
   //#region order
 
+  @Get('history-order-account')
+  @UseGuards(CheckNotExpiresTokenGuard)
+  historyOrderAccount(@Query('token') token: string) {
+    return this.orderService.historyOrderAccount({ token });
+  }
+
   @Get('order')
   @ApiOperation({ summary: 'Get orders with optional date filtering' })
   @ApiQuery({ name: 'start_day', required: false, type: String })
   @ApiQuery({ name: 'end_day', required: false, type: String })
   @ApiQuery({ name: 'pay_status', required: false, type: Boolean })
+  @UseGuards(CheckDashboardCapabilityGuard)
+  @UseGuards(CheckNotExpiresTokenGuard)
   getOrder(
     @Query('token') token: string,
     @Query('end_day') end_day?: string,
@@ -139,6 +150,8 @@ export class OrderController {
   }
 
   @Get('order/:order_id')
+  @UseGuards(CheckDashboardCapabilityGuard)
+  @UseGuards(CheckNotExpiresTokenGuard)
   getOneOrder(
     @Param('order_id') order_id: string,
     @Query('token') token: string,
@@ -217,6 +230,8 @@ export class OrderController {
   }
 
   @Delete('order-item/:order_item_id')
+  @UseGuards(CheckDashboardCapabilityGuard)
+  @UseGuards(CheckNotExpiresTokenGuard)
   deleteItemOrder(
     @Param('order_item_id') order_item_id: string,
     @Query('token') token: string,

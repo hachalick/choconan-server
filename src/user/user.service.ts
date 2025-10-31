@@ -9,6 +9,7 @@ import { Not, Repository } from 'typeorm';
 import { DashboardCapability } from 'src/modules/entity/mysql/DashboardCapability';
 import { ConfigService } from '@nestjs/config';
 import { hashPassword } from 'src/modules/utils/hash';
+import { ServiceService } from 'src/service/service.service';
 
 @Injectable()
 export class UserService {

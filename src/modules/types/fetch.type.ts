@@ -8,6 +8,8 @@ type TProductMenu = {
   name: string;
   description: string;
   src: string;
+  snap: string;
+  tapsi: string;
 };
 
 type TProductsMenu = TProductMenu[];

@@ -11,6 +11,7 @@ import { JwtModule } from 'src/modules/jwt/jwt.module';
 import { UserEntity } from 'src/modules/entity/mysql/User.entity';
 import { FactorEntity } from 'src/modules/entity/mysql/Factor.entity';
 import { FactorItemEntity } from 'src/modules/entity/mysql/FactorItem.entity';
+import { RobotModule } from 'src/robot/robot.module';
 
 @Module({
   imports: [
@@ -21,9 +22,11 @@ import { FactorItemEntity } from 'src/modules/entity/mysql/FactorItem.entity';
       UserEntity,
       FactorEntity,
       FactorItemEntity,
+      UserEntity,
     ]),
     SocketOrderModule,
     JwtModule,
+    RobotModule,
   ],
   controllers: [OrderController],
   providers: [OrderService, SocketOrderGateway],
