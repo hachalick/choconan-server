@@ -532,19 +532,19 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
 
       if (isAccess) return isAccess;
 
-      isAccess =
-        isAccess ||
-        (route.startsWith('/user/access') &&
-          method === 'get' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+      // isAccess =
+      //   isAccess ||
+      //   (route.startsWith('/user/access') &&
+      //     method === 'get' &&
+      //     this.isAccess(user, EDashboardCapability.READ_));
 
-      if (isAccess) return isAccess;
+      // if (isAccess) return isAccess;
 
       isAccess =
         isAccess ||
         (route.startsWith('/menu/category-menu') &&
           method === 'post' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.CREATE_MENU_CATEGORY));
 
       if (isAccess) return isAccess;
 
@@ -552,7 +552,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/menu/category-menu/') &&
           method === 'put' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.UPDATE_MENU_CATEGORY));
 
       if (isAccess) return isAccess;
 
@@ -560,15 +560,17 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/menu/category-menu/') &&
           method === 'delete' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.DELETE_MENU_CATEGORY));
 
       if (isAccess) return isAccess;
+
+      console.log(route)
 
       isAccess =
         isAccess ||
         (route.startsWith('/menu/product-menu/') &&
           method === 'post' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.CREATE_MENU_PRODUCT));
 
       if (isAccess) return isAccess;
 
@@ -576,7 +578,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/menu/product-menu/') &&
           method === 'put' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.UPDATE_MENU_PRODUCT));
 
       if (isAccess) return isAccess;
 
@@ -584,7 +586,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/menu/product-menu/') &&
           method === 'delete' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.DELETE_MENU_PRODUCT));
 
       if (isAccess) return isAccess;
 
@@ -592,7 +594,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/menu/economic-package') &&
           method === 'post' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.CREATE_ECONOMIC_PACKAGE));
 
       if (isAccess) return isAccess;
 
@@ -600,7 +602,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/menu/economic-package/') &&
           method === 'put' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.UPDATE_ECONOMIC_PACKAGE));
 
       if (isAccess) return isAccess;
 
@@ -608,7 +610,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/menu/economic-package/') &&
           method === 'delete' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.DELETE_ECONOMIC_PACKAGE));
 
       if (isAccess) return isAccess;
 
@@ -616,7 +618,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/menu/content-economic-package') &&
           method === 'post' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.CREATE_ECONOMIC_PACKAGE));
 
       if (isAccess) return isAccess;
 
@@ -624,7 +626,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/menu/content-economic-package/') &&
           method === 'delete' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.DELETE_ECONOMIC_PACKAGE));
 
       if (isAccess) return isAccess;
 
@@ -632,7 +634,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/file/excel-menu') &&
           method === 'post' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.CREATE_IMAGE));
 
       if (isAccess) return isAccess;
 
@@ -640,7 +642,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/file/image') &&
           method === 'post' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.CREATE_IMAGE));
 
       if (isAccess) return isAccess;
 
@@ -648,7 +650,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/file/image-product') &&
           method === 'post' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.CREATE_IMAGE));
 
       if (isAccess) return isAccess;
 
@@ -656,7 +658,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/file/image/') &&
           method === 'delete' &&
-          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+          this.isAccess(user, EDashboardCapability.DELETE_IMAGE));
 
       if (isAccess) return isAccess;
 
