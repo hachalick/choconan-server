@@ -338,6 +338,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         dashboardCapabilityUser: { dashboard_capability: true },
       },
     });
+    
     if (!user) {
       throw new HttpException(
         EMessageHttpException.USER_NOT_FOUND,
@@ -392,7 +393,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/order/order') &&
           method === 'get' &&
-          this.isAccess(user, EDashboardCapability.CREATE_ORDER));
+          this.isAccess(user, EDashboardCapability.READ_ORDER));
 
       if (isAccess) return isAccess;
 
@@ -414,6 +415,14 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
 
       isAccess =
         isAccess ||
+        (route.startsWith('/order/order/pay-status/') &&
+          method === 'put' &&
+          this.isAccess(user, EDashboardCapability.UPDATE_ORDER));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
         (route.startsWith('/order/order/') &&
           method === 'delete' &&
           this.isAccess(user, EDashboardCapability.DELETE_ORDER));
@@ -456,7 +465,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/user/user') &&
           method === 'post' &&
-          this.isAccess(user, EDashboardCapability.READ_USER));
+          this.isAccess(user, EDashboardCapability.CREATE_USER));
 
       if (isAccess) return isAccess;
 
@@ -464,7 +473,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/user/user') &&
           method === 'put' &&
-          this.isAccess(user, EDashboardCapability.READ_USER));
+          this.isAccess(user, EDashboardCapability.UPDATE_USER));
 
       if (isAccess) return isAccess;
 
@@ -472,7 +481,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/user/user') &&
           method === 'delete' &&
-          this.isAccess(user, EDashboardCapability.READ_USER));
+          this.isAccess(user, EDashboardCapability.DELETE_USER));
 
       if (isAccess) return isAccess;
 
@@ -488,7 +497,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/user/dashboard-capability') &&
           method === 'post' &&
-          this.isAccess(user, EDashboardCapability.READ_USER));
+          this.isAccess(user, EDashboardCapability.CREATE_USER));
 
       if (isAccess) return isAccess;
 
@@ -496,7 +505,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         isAccess ||
         (route.startsWith('/user/dashboard-capability') &&
           method === 'delete' &&
-          this.isAccess(user, EDashboardCapability.READ_USER));
+          this.isAccess(user, EDashboardCapability.DELETE_USER));
 
       if (isAccess) return isAccess;
 
@@ -564,7 +573,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
 
       if (isAccess) return isAccess;
 
-      console.log(route)
+      console.log(route);
 
       isAccess =
         isAccess ||

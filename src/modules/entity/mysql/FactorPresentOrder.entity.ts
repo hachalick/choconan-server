@@ -22,6 +22,23 @@ export class FactorPresentOrderEntity {
   })
   count: number;
 
+  @Column({
+    type: 'timestamp',
+    nullable: false,
+    unique: false,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  create_at: Date;
+
+  @Column({
+    type: 'timestamp',
+    nullable: false,
+    unique: false,
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  update_at: Date;
+
   @ManyToOne(
     () => ProductMenuEntity,
     (products) => products.categoryProductMenu,

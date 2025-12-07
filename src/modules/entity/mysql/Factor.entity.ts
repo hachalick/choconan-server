@@ -52,7 +52,6 @@ export class FactorEntity {
     nullable: false,
     unique: false,
     default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
     transformer: {
       to: (value: Date) => value,
       from: (value: string) => new Date(value),

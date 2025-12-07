@@ -124,7 +124,7 @@ export class OrderService {
       where: {
         factorPresentOrderTable: { factor_present_order_id: Not(IsNull()) },
       },
-      order: { table: 'ASC' },
+      order: { factorPresentOrderTable: { update_at: 'DESC' } },
       relations: { factorPresentOrderTable: { products: true } },
     });
     return resPresentOrder;
@@ -203,9 +203,90 @@ export class OrderService {
       where: { factor_id },
       relations: { factor_items: true },
     });
-    res.create_at = moment(res.create_at).format('jYYYY/jMM/jDD HH:mm:ss');
+    res.create_at = moment(res?.create_at).format('jYYYY/jMM/jDD HH:mm:ss');
     res.update_at = moment(res.update_at).format('jYYYY/jMM/jDD HH:mm:ss');
     return res;
+  }
+
+  // async monthlyReport(year: number, month: number) {
+  //   const { startDate, endDate } = this.getShamsiMonthRange(year, month);
+
+  //   const qb = this.factorRepository.createQueryBuilder('factor');
+
+  //   const result = await qb
+  //     .leftJoinAndSelect('factor.factor_items', 'items')
+  //     .where('factor.create_at BETWEEN :start AND :end', {
+  //       start: startDate,
+  //       end: endDate,
+  //     })
+  //     .getMany();
+
+  //   return result;
+  // }
+
+  getShamsiMonthRange(year: number, month: number) {
+    if (!year || !month) {
+      const today = moment();
+      year = Number(today.format('jYYYY'));
+      month = Number(today.format('jM'));
+    }
+
+    const start = moment(`${year}/${month}/01`, 'jYYYY/jM/jD').startOf(
+      'jMonth',
+    );
+    const end = moment(start).endOf('jMonth');
+
+    return {
+      startDate: start.toDate(),
+      endDate: end.toDate(),
+    };
+  }
+  
+  async monthlyReport(year: number, month: number) {
+    const start = moment(`${year}/${month}/01`, 'jYYYY/jM/jD').startOf(
+      'jMonth',
+    );
+    const end = moment(start).endOf('jMonth');
+
+    const factors = await this.factorRepository.find({
+      where: { create_at: Between(start.toDate(), end.toDate()) },
+      relations: { factor_items: true },
+    });
+
+    let totalItems = 0;
+    const productMap = {};
+
+    for (const f of factors) {
+      for (const item of f.factor_items) {
+        totalItems += item.product_count;
+        productMap[item.product_name] =
+          (productMap[item.product_name] || 0) + item.product_count;
+      }
+    }
+
+    return {
+      month: `${year}/${month}`,
+      totalFactors: factors.length,
+      totalItems,
+    };
+  }
+
+  async last12MonthsReport(countMonth = 12) {
+    const result = [];
+
+    let cursor = moment().startOf('jMonth');
+
+    for (let i = 0; i < countMonth; i++) {
+      const year = Number(cursor.format('jYYYY'));
+      const month = Number(cursor.format('jM'));
+
+      const report = await this.monthlyReport(year, month);
+      result.push(report);
+
+      cursor = cursor.subtract(1, 'jMonth');
+    }
+
+    return result;
   }
 
   private getDateRange(
@@ -331,6 +412,21 @@ export class OrderService {
         { factor_id },
         { customer_mobile, factor_number, location, pay_status, tax },
       );
+      return { update: true };
+    } catch (error) {
+      return { update: false };
+    }
+  }
+
+  async updatePayStatusOrder({
+    factor_id,
+    pay_status,
+  }: {
+    factor_id: string;
+    pay_status: boolean;
+  }): Promise<{ update: boolean }> {
+    try {
+      await this.factorRepository.update({ factor_id }, { pay_status });
       return { update: true };
     } catch (error) {
       return { update: false };

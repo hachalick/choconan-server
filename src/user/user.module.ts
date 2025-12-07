@@ -18,4 +18,5 @@ import { RoleUserEntity } from 'src/modules/entity/mysql/RoleUser.entity';
   providers: [UserService],
   exports: [UserService]
 })
+
 export class UserModule {}

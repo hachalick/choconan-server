@@ -149,6 +149,13 @@ export class OrderController {
     });
   }
 
+  @Get('order/monthly')
+  @UseGuards(CheckDashboardCapabilityGuard)
+  @UseGuards(CheckNotExpiresTokenGuard)
+  getOrderMonth(@Query('token') token: string) {
+    return this.orderService.last12MonthsReport();
+  }
+
   @Get('order/:order_id')
   @UseGuards(CheckDashboardCapabilityGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
@@ -182,6 +189,20 @@ export class OrderController {
       location,
       pay_status,
       tax,
+    });
+  }
+
+  @Put('order/pay-status/:order_id')
+  @UseGuards(CheckDashboardCapabilityGuard)
+  @UseGuards(CheckNotExpiresTokenGuard)
+  updatePayStatusOrder(
+    @Param('order_id') order_id: string,
+    @Query('token') token: string,
+    @Body('pay_status') pay_status: boolean,
+  ) {
+    return this.orderService.updatePayStatusOrder({
+      factor_id: order_id,
+      pay_status,
     });
   }
 

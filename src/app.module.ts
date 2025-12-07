@@ -27,7 +27,7 @@ import { ServiceModule } from './service/service.module';
     OrderModule,
     MenuModule,
     UserModule,
-    RobotModule,
+    // RobotModule,
     ServiceModule,
   ],
   controllers: [AppController],
