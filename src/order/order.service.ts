@@ -241,7 +241,7 @@ export class OrderService {
       endDate: end.toDate(),
     };
   }
-  
+
   async monthlyReport(year: number, month: number) {
     const start = moment(`${year}/${month}/01`, 'jYYYY/jM/jD').startOf(
       'jMonth',
@@ -253,21 +253,45 @@ export class OrderService {
       relations: { factor_items: true },
     });
 
+    let totalPrice = 0;
     let totalItems = 0;
     const productMap = {};
 
     for (const f of factors) {
       for (const item of f.factor_items) {
+        totalPrice +=
+          item.product_count * (item.product_price - item.product_discount);
         totalItems += item.product_count;
         productMap[item.product_name] =
           (productMap[item.product_name] || 0) + item.product_count;
       }
     }
 
+    const cursorNow = moment().startOf('jMonth');
+
+    const raghamAshar = 100;
+    let averagePrice = 0;
+    let averageItems = 0;
+    let averageFactors = 0;
+
+    if (
+      year == Number(cursorNow.format('jYYYY')) &&
+      month === Number(cursorNow.format('jM'))
+    ) {
+    } else {
+      averagePrice = Math.floor(totalPrice * raghamAshar / Number(end.format('jD'))) / raghamAshar;
+      averageItems = Math.floor(totalItems * raghamAshar / Number(end.format('jD'))) / raghamAshar;
+      averageFactors = Math.floor(factors.length * raghamAshar / Number(end.format('jD'))) / raghamAshar;
+    }
+
     return {
       month: `${year}/${month}`,
       totalFactors: factors.length,
+      averageFactors,
       totalItems,
+      averageItems,
+      totalPrice,
+      averagePrice
     };
   }
 
@@ -275,6 +299,11 @@ export class OrderService {
     const result = [];
 
     let cursor = moment().startOf('jMonth');
+
+    console.log(cursor.format('jYYYY'));
+    console.log(cursor.format('jM'));
+    // console.log(cursor.subtract(1, 'jMonth').format('jM'))
+    // console.log(cursor.subtract(1, 'jMonth').format('jYYYY'))
 
     for (let i = 0; i < countMonth; i++) {
       const year = Number(cursor.format('jYYYY'));

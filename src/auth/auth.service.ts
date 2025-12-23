@@ -534,7 +534,6 @@ export class AuthService {
     const key = this.configService.get('App.token_hash_password');
     const hashPass = hashPassword(password, key);
     const otp = createOtp(6);
-    console.log(otp);
     const account = await this.userRepository.findOne({
       where: { phone, national_code },
       relations: { rolesUser: true },
