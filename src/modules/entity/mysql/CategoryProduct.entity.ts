@@ -27,6 +27,13 @@ export class CategoryProductMenuEntity {
   })
   icon: string;
 
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    unique: false,
+  })
+  IsShowMenu: boolean;
+
   @OneToMany(
     () => ProductMenuEntity,
     (products) => products.categoryProductMenu,

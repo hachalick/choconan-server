@@ -50,54 +50,62 @@ export class RobotService {
   }
 
   public async sendMessageToAdminChat(text: string) {
-    this.list_id_admin.forEach(async (id_admin) => {
-      try {
-        await this.bot.telegram.sendMessage(id_admin, text);
-      } catch (ex) {
-        console.log(ex);
-      }
-    });
-  }
-
-  private async launch() {
-    await this.bot.launch();
-  }
-
-  private start() {
-    this.bot.start(async (ctx) => {
-      ctx.reply('سلام من ربات شوکونان هستم');
-      await this.replayHelp(ctx);
+    try {
       this.list_id_admin.forEach(async (id_admin) => {
-        const { id, first_name, username } = ctx.chat as {
-          id: number;
-          first_name?: string;
-          username?: string;
-        };
         try {
-          await this.bot.telegram.sendMessage(
-            id_admin,
-            `آیدی\n ${id}\n\n نام کاربری\n "${first_name}"\n\n یوزر\n "${username}"\n\n شروع به کار با ربات کرد.`,
-          );
+          await this.bot.telegram.sendMessage(id_admin, text);
         } catch (ex) {
           console.log(ex);
         }
       });
-    });
+    } catch (error) {}
+  }
+
+  private async launch() {
+    try {
+      await this.bot.launch();
+    } catch (error) {}
+  }
+
+  private start() {
+    try {
+      this.bot.start(async (ctx) => {
+        ctx.reply('سلام من ربات شوکونان هستم');
+        await this.replayHelp(ctx);
+        this.list_id_admin.forEach(async (id_admin) => {
+          const { id, first_name, username } = ctx.chat as {
+            id: number;
+            first_name?: string;
+            username?: string;
+          };
+          try {
+            await this.bot.telegram.sendMessage(
+              id_admin,
+              `آیدی\n ${id}\n\n نام کاربری\n "${first_name}"\n\n یوزر\n "${username}"\n\n شروع به کار با ربات کرد.`,
+            );
+          } catch (ex) {
+            console.log(ex);
+          }
+        });
+      });
+    } catch (error) {}
   }
 
   private async replayHelp(ctx) {
-    ctx.reply('چه کمکی از دستم برمیاد براتون ؟', {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: 'دیدن منو',
-              callback_data: ECommandTel.SEE_MENU,
-            },
+    try {
+      ctx.reply('چه کمکی از دستم برمیاد براتون ؟', {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: 'دیدن منو',
+                callback_data: ECommandTel.SEE_MENU,
+              },
+            ],
           ],
-        ],
-      },
-    });
+        },
+      });
+    } catch (error) {}
   }
 
   private help() {

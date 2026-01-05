@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   Post,
   Put,
@@ -32,18 +33,18 @@ export class UserController {
   @Get('account')
   @UseGuards(CheckExistAccountGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
-  getAccount(@Query('token') token: string) {
-    return this.userService.getAccount({ token });
+  getAccount(@Headers('access_token') access_token: string) {
+    return this.userService.getAccount({ token: access_token });
   }
 
   @Put('account')
   @UseGuards(CheckNotExpiresTokenGuard)
-  updateProfile(@Query('token') token: string, @Body() body: updateProfileDto) {
+  updateProfile(@Headers('access_token') access_token: string, @Body() body: updateProfileDto) {
     const { family, name } = body;
     return this.userService.updateProfile({
       family,
       name,
-      token,
+      token: access_token,
     });
   }
 
@@ -51,7 +52,7 @@ export class UserController {
   @UseGuards(CheckExistAccountGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
-  getAllUser(@Query('token') token: string) {
+  getAllUser(@Headers('access_token') access_token: string) {
     return this.userService.getAllUser();
   }
 
@@ -60,7 +61,7 @@ export class UserController {
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
   getUserById(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Param('user_id') user_id: string,
   ) {
     return this.userService.getUserById(user_id);
@@ -70,7 +71,7 @@ export class UserController {
   @UseGuards(CheckExistAccountGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
-  createUser(@Query('token') token: string, @Body() body: createUserDto) {
+  createUser(@Headers('access_token') access_token: string, @Body() body: createUserDto) {
     const { national_code, phone, family, name } = body;
     return this.userService.createUser({
       national_code,
@@ -86,7 +87,7 @@ export class UserController {
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
   updateUserById(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Param('user_id') user_id: string,
     @Body() body: UpdateUserDto,
   ) {
@@ -104,7 +105,7 @@ export class UserController {
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
   deleteUserById(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Param('user_id') user_id: string,
   ) {
     return this.userService.deleteUserById(user_id);
@@ -114,7 +115,7 @@ export class UserController {
   @UseGuards(CheckExistAccountGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
-  getDashboardCapability(@Query('token') token: string) {
+  getDashboardCapability(@Headers('access_token') access_token: string) {
     return this.userService.getDashboardCapability();
   }
 
@@ -123,7 +124,7 @@ export class UserController {
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
   addDashboardCapabilityToUser(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Body() body: UpdateDashboardCapabilityDto,
   ) {
     return this.userService.addDashboardCapabilityToUserById(
@@ -137,7 +138,7 @@ export class UserController {
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
   removeDashboardCapabilityToUser(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Body() body: UpdateDashboardCapabilityDto,
   ) {
     return this.userService.removeDashboardCapabilityToUser(
@@ -150,7 +151,7 @@ export class UserController {
   @UseGuards(CheckExistAccountGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
-  getAllRole(@Query('token') token: string) {
+  getAllRole(@Headers('access_token') access_token: string) {
     return this.userService.getAllRole();
   }
 
@@ -159,7 +160,7 @@ export class UserController {
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
   getRoleById(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Param('role_id') role_id: string,
   ) {
     return this.userService.getRoleById(role_id);
@@ -169,7 +170,7 @@ export class UserController {
   @UseGuards(CheckExistAccountGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
-  createRole(@Query('token') token: string, @Body() body: CreateRoleDto) {
+  createRole(@Headers('access_token') access_token: string, @Body() body: CreateRoleDto) {
     return this.userService.createRole(body.role_name);
   }
 
@@ -178,7 +179,7 @@ export class UserController {
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
   updateRole(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Param('role_id') role_id: string,
     @Body() body: CreateRoleDto,
   ) {
@@ -189,7 +190,7 @@ export class UserController {
   @UseGuards(CheckExistAccountGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
-  deleteRole(@Query('token') token: string, @Param('role_id') role_id: string) {
+  deleteRole(@Headers('access_token') access_token: string, @Param('role_id') role_id: string) {
     return this.userService.deleteRole(role_id);
   }
 
@@ -197,7 +198,7 @@ export class UserController {
   @UseGuards(CheckExistAccountGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
-  getAllAccess(@Query('token') token: string) {
+  getAllAccess(@Headers('access_token') access_token: string) {
     return this.userService.getAllAccess();
   }
 }

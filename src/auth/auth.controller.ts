@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   Param,
   Post,
   Put,
@@ -19,9 +20,10 @@ import {
   CheckNotExpiresTokenGuard,
   LoginOtpGuard,
   LoginPasswordGuard,
-  ExistTokenInParamGuard,
+  ExistTokenInHeadersGuard,
   ResetPasswordGuard,
   SignUpGuard,
+  ExistTokenInParamGuard,
 } from './auth.guard';
 
 @ApiTags('Auth')
@@ -58,13 +60,13 @@ export class AuthController {
   @UseGuards(ResetPasswordGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   updatePassword(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Body() body: resetPasswordDto,
   ) {
     const { new_password } = body;
     return this.authService.updatePassword({
       new_password,
-      token,
+      token: access_token,
     });
   }
 }

@@ -19,6 +19,12 @@ import { TransactionFactorEntity } from '../entity/mysql/TransactionFactor.entit
 import { TransactionTypeEntity } from '../entity/mysql/TransactionType.entity';
 import { DashboardCapability } from '../entity/mysql/DashboardCapability';
 import { DashboardCapabilityUser } from '../entity/mysql/DashboardCapabilityUser';
+import { UnitEntity } from '../entity/mysql/Unit.entity';
+import { ProductUnitEntity } from '../entity/mysql/ProductUnit.entity';
+import { ProductUnitRatioEntity } from '../entity/mysql/ProductUnitRatio.entity';
+import { ProductPricingEntity } from '../entity/mysql/ProductPricing.entity';
+import { ProductUnitDetailEntity } from '../entity/mysql/ProductUnitDetailEntity.entity';
+import { CostPricingEntity } from '../entity/mysql/CostPricing.entity';
 
 @Injectable()
 export class TypeOrmDbConfig implements TypeOrmOptionsFactory {
@@ -40,6 +46,7 @@ export class TypeOrmDbConfig implements TypeOrmOptionsFactory {
         DashboardCapability,
         DashboardCapabilityUser,
         ContentEconomicPackageEntity,
+        CostPricingEntity,
         EconomicPackageEntity,
         FactorEntity,
         FactorItemEntity,
@@ -48,10 +55,15 @@ export class TypeOrmDbConfig implements TypeOrmOptionsFactory {
         OtpEntity,
         PresentOrderTableEntity,
         ProductMenuEntity,
+        ProductPricingEntity,
+        ProductUnitEntity,
+        ProductUnitDetailEntity,
+        ProductUnitRatioEntity,
         RoleEntity,
         RoleUserEntity,
         TransactionFactorEntity,
         TransactionTypeEntity,
+        UnitEntity,
         UserEntity,
       ],
     };

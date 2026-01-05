@@ -53,6 +53,12 @@ export class FactorItemEntity {
   })
   product_count: number;
 
+  @Column({
+    type: 'uuid',
+    nullable: true,
+  })
+  product_menu_id: string;
+
   @ManyToOne(() => FactorEntity, (factorEntity) => factorEntity.factor_items, {
     onDelete: 'CASCADE',
   })

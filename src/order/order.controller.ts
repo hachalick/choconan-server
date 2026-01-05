@@ -1,12 +1,10 @@
-import {
-  CheckDashboardCapabilityGuard,
-  ExistTokenInParamGuard,
-} from './../auth/auth.guard';
+import { CheckDashboardCapabilityGuard } from './../auth/auth.guard';
 import {
   Body,
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   ParseBoolPipe,
   ParseIntPipe,
@@ -41,7 +39,7 @@ export class OrderController {
   @UseGuards(CheckNotExpiresTokenGuard)
   createTable(
     @Param('table_number', ParseIntPipe) table_number: number,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
   ) {
     return this.orderService.createTable({ table_number });
   }
@@ -51,7 +49,7 @@ export class OrderController {
   @UseGuards(CheckNotExpiresTokenGuard)
   deleteTable(
     @Param('table_id') table_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
   ) {
     return this.orderService.deleteTable({ table_id });
   }
@@ -70,7 +68,7 @@ export class OrderController {
   @UseGuards(CheckNotExpiresTokenGuard)
   acceptStatusTable(
     @Param('table_id') table_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Query('status') status: 'accept' | 'edit',
   ) {
     if (status === 'accept') {
@@ -85,7 +83,7 @@ export class OrderController {
   @UseGuards(CheckNotExpiresTokenGuard)
   deleteStatusTable(
     @Param('table_id') table_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
   ) {
     return this.orderService.deleteStatusTable({ table_id });
   }
@@ -120,8 +118,8 @@ export class OrderController {
 
   @Get('history-order-account')
   @UseGuards(CheckNotExpiresTokenGuard)
-  historyOrderAccount(@Query('token') token: string) {
-    return this.orderService.historyOrderAccount({ token });
+  historyOrderAccount(@Headers('access_token') access_token: string) {
+    return this.orderService.historyOrderAccount({ token: access_token });
   }
 
   @Get('order')
@@ -132,7 +130,7 @@ export class OrderController {
   @UseGuards(CheckDashboardCapabilityGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   getOrder(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Query('end_day') end_day?: string,
     @Query('start_day') start_day?: string,
     @Query('pay_status') pay_status?: string,
@@ -152,7 +150,7 @@ export class OrderController {
   @Get('order/monthly')
   @UseGuards(CheckDashboardCapabilityGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
-  getOrderMonth(@Query('token') token: string) {
+  getOrderMonth(@Headers('access_token') access_token: string) {
     return this.orderService.last12MonthsReport();
   }
 
@@ -161,7 +159,7 @@ export class OrderController {
   @UseGuards(CheckNotExpiresTokenGuard)
   getOneOrder(
     @Param('order_id') order_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
   ) {
     return this.orderService.getOneOrder({ factor_id: order_id });
   }
@@ -169,7 +167,7 @@ export class OrderController {
   @Post('order')
   @UseGuards(CheckDashboardCapabilityGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
-  createOrder(@Query('token') token: string) {
+  createOrder(@Headers('access_token') access_token: string) {
     return this.orderService.createOrder();
   }
 
@@ -178,7 +176,7 @@ export class OrderController {
   @UseGuards(CheckNotExpiresTokenGuard)
   updateOrder(
     @Param('order_id') order_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Body() body: UpdateOrderDto,
   ) {
     const { customer_mobile, factor_number, location, pay_status, tax } = body;
@@ -197,7 +195,7 @@ export class OrderController {
   @UseGuards(CheckNotExpiresTokenGuard)
   updatePayStatusOrder(
     @Param('order_id') order_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Body('pay_status') pay_status: boolean,
   ) {
     return this.orderService.updatePayStatusOrder({
@@ -211,7 +209,7 @@ export class OrderController {
   @UseGuards(CheckNotExpiresTokenGuard)
   deleteOrder(
     @Param('order_id') order_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
   ) {
     return this.orderService.deleteOrder({ factor_id: order_id });
   }
@@ -225,7 +223,7 @@ export class OrderController {
   @UseGuards(CheckNotExpiresTokenGuard)
   createItemOrder(
     @Param('order_id') order_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
   ) {
     return this.orderService.createOrderItem({ factor_id: order_id });
   }
@@ -235,7 +233,7 @@ export class OrderController {
   @UseGuards(CheckNotExpiresTokenGuard)
   updateItemOrder(
     @Param('order_item_id') order_item_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Body() body: UpdateOrderItemDto,
   ) {
     const { product_count, product_discount, product_name, product_price } =
@@ -255,7 +253,7 @@ export class OrderController {
   @UseGuards(CheckNotExpiresTokenGuard)
   deleteItemOrder(
     @Param('order_item_id') order_item_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
   ) {
     return this.orderService.deleteOrderItem({ factor_item_id: order_item_id });
   }

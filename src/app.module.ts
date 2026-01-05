@@ -13,6 +13,9 @@ import { UserModule } from './user/user.module';
 import { FileModule } from './file/file.module';
 import { RobotModule } from './robot/robot.module';
 import { ServiceModule } from './service/service.module';
+import { PricingModule } from './pricing/pricing.module';
+import { FactorItemEntity } from './modules/entity/mysql/FactorItem.entity';
+import { ProductMenuEntity } from './modules/entity/mysql/Product.entity';
 
 @Module({
   imports: [
@@ -20,6 +23,10 @@ import { ServiceModule } from './service/service.module';
       useClass: TypeOrmDbConfig,
       inject: [CustomConfigsModule],
     }),
+    TypeOrmModule.forFeature([
+      ProductMenuEntity,
+      FactorItemEntity,
+    ]),
     CustomConfigsModule,
     AuthModule,
     BlogModule,
@@ -27,7 +34,8 @@ import { ServiceModule } from './service/service.module';
     OrderModule,
     MenuModule,
     UserModule,
-    // RobotModule,
+    RobotModule,
+    PricingModule,
     ServiceModule,
   ],
   controllers: [AppController],

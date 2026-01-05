@@ -10,6 +10,7 @@ import {
 import { FactorPresentOrderEntity } from './FactorPresentOrder.entity';
 import { CategoryProductMenuEntity } from './CategoryProduct.entity';
 import { ContentEconomicPackageEntity } from './ContentEconomicPackage.entity';
+import { ProductUnitEntity } from './ProductUnit.entity';
 
 @Entity()
 export class ProductMenuEntity {
@@ -120,7 +121,7 @@ export class ProductMenuEntity {
   @OneToMany(
     () => FactorPresentOrderEntity,
     (detailsPresentOrder) => detailsPresentOrder.presentOrderTable,
-    { onDelete: 'SET NULL' },
+    { onDelete: 'CASCADE' },
   )
   detailsPresentOrder: FactorPresentOrderEntity[];
 
@@ -129,4 +130,9 @@ export class ProductMenuEntity {
     (contentEconomicPackage) => contentEconomicPackage.productMenu,
   )
   contentEconomicPackage: ContentEconomicPackageEntity[];
+
+  @OneToMany(() => ProductUnitEntity, (productUnit) => productUnit.product, {
+    onDelete: 'CASCADE',
+  })
+  productUnit: ProductUnitEntity[];
 }

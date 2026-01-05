@@ -279,9 +279,15 @@ export class OrderService {
       month === Number(cursorNow.format('jM'))
     ) {
     } else {
-      averagePrice = Math.floor(totalPrice * raghamAshar / Number(end.format('jD'))) / raghamAshar;
-      averageItems = Math.floor(totalItems * raghamAshar / Number(end.format('jD'))) / raghamAshar;
-      averageFactors = Math.floor(factors.length * raghamAshar / Number(end.format('jD'))) / raghamAshar;
+      averagePrice =
+        Math.floor((totalPrice * raghamAshar) / Number(end.format('jD'))) /
+        raghamAshar;
+      averageItems =
+        Math.floor((totalItems * raghamAshar) / Number(end.format('jD'))) /
+        raghamAshar;
+      averageFactors =
+        Math.floor((factors.length * raghamAshar) / Number(end.format('jD'))) /
+        raghamAshar;
     }
 
     return {
@@ -291,7 +297,7 @@ export class OrderService {
       totalItems,
       averageItems,
       totalPrice,
-      averagePrice
+      averagePrice,
     };
   }
 
@@ -529,9 +535,18 @@ export class OrderService {
     product_price: number;
   }) {
     try {
+      const product = await this.productMenuRepository.findOne({
+        where: { name: product_name },
+      });
       await this.factorItemRepository.update(
         { factor_item_id },
-        { product_count, product_discount, product_name, product_price },
+        {
+          product_count,
+          product_discount,
+          product_name,
+          product_price,
+          product_menu_id: product.product_id,
+        },
       );
       return { update: true };
     } catch (error) {

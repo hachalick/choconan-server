@@ -2,6 +2,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   HttpStatus,
   Param,
   ParseFilePipeBuilder,
@@ -35,7 +36,7 @@ export class FileController {
     type: UploadFileDto,
   })
   uploadFileExcel(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({
@@ -69,7 +70,7 @@ export class FileController {
     type: UploadFileDto,
   })
   uploadImageProduct(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({
@@ -97,7 +98,7 @@ export class FileController {
     type: UploadFileDto,
   })
   uploadImage(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({
@@ -119,7 +120,7 @@ export class FileController {
   @UseGuards(CheckDashboardCapabilityGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   deleteImage(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Param('id') id: string,
   ) {
     return this.fileService.deleteImage({ id });

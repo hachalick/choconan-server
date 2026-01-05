@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   ParseIntPipe,
   Post,
@@ -31,17 +32,17 @@ export class MenuController {
 
   //#region get menu
 
-  @Get('get-menu')
+  @Get('menu')
   getAllMenu() {
     return this.menuService.getAllMenu();
   }
 
-  @Get('get-menu/:category')
+  @Get('menu/:category')
   getCategoryMenu(@Param('category') category: string) {
     return this.menuService.getCategoryMenu({ category });
   }
 
-  @Get('get-menu/:category/:id')
+  @Get('menu/:category/:id')
   getOneProductMenu(
     @Param('category') category: string,
     @Param('id', ParseIntPipe) id: number,
@@ -69,7 +70,7 @@ export class MenuController {
   @UseGuards(CheckDashboardCapabilityGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   addCategoryMenu(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Body() body: AddCategoryMenuDto,
   ) {
     const { category, icon } = body;
@@ -81,7 +82,7 @@ export class MenuController {
   @UseGuards(CheckNotExpiresTokenGuard)
   updateCategoryMenu(
     @Param('category_id') category_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Body() body: AddCategoryMenuDto,
   ) {
     const { category, icon } = body;
@@ -97,7 +98,7 @@ export class MenuController {
   @UseGuards(CheckNotExpiresTokenGuard)
   deleteCategoryMenu(
     @Param('category_id') category_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
   ) {
     return this.menuService.deleteCategoryMenu({ category_id });
   }
@@ -111,7 +112,7 @@ export class MenuController {
   @UseGuards(CheckNotExpiresTokenGuard)
   addProductMenu(
     @Param('category_id') category_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Body() body: AddProductMenuDto,
   ) {
     const {
@@ -148,7 +149,7 @@ export class MenuController {
   @UseGuards(CheckNotExpiresTokenGuard)
   updateProductMenu(
     @Param('product_id') product_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Body() body: AddProductMenuDto,
   ) {
     const {
@@ -185,7 +186,7 @@ export class MenuController {
   @UseGuards(CheckNotExpiresTokenGuard)
   deleteProductMenu(
     @Param('product_id') product_id: string,
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
   ) {
     return this.menuService.deleteProductMenu({ product_id });
   }
@@ -211,7 +212,7 @@ export class MenuController {
   @UseGuards(CheckDashboardCapabilityGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   addEconomicPackage(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Body() body: AddEconomicPackage,
   ) {
     const {
@@ -240,7 +241,7 @@ export class MenuController {
   @UseGuards(CheckDashboardCapabilityGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   updateEconomicPackage(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Param('economic_package_id') economic_package_id: string,
     @Body() body: UpdateEconomicPackage,
   ) {
@@ -271,7 +272,7 @@ export class MenuController {
   @UseGuards(CheckDashboardCapabilityGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   deleteEconomicPackage(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Param('economic_package_id') economic_package_id: string,
   ) {
     return this.menuService.deleteEconomicPackage({ economic_package_id });
@@ -285,7 +286,7 @@ export class MenuController {
   @UseGuards(CheckDashboardCapabilityGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   addContentEconomicPackage(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Body() body: AddUpdateContentEconomicPackage,
   ) {
     const { economic_package_id, product_id, count } = body;
@@ -300,7 +301,7 @@ export class MenuController {
   @UseGuards(CheckDashboardCapabilityGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   deleteContentEconomicPackage(
-    @Query('token') token: string,
+    @Headers('access_token') access_token: string,
     @Param('content_economic_package_id') content_economic_package_id: string,
   ) {
     return this.menuService.deleteContentEconomicPackage({
@@ -309,4 +310,5 @@ export class MenuController {
   }
 
   //#endregion
+
 }

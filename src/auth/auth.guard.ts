@@ -84,6 +84,7 @@ export class LoginOtpGuard implements CanActivate {
       phone,
       otp,
     }: { national_code: string; phone: string; otp: string } = request.body;
+
     if (national_code === undefined && phone === undefined) {
       throw new HttpException(
         EMessageHttpException.USER_NOT_FOUND,
@@ -128,11 +129,11 @@ export class ResetPasswordGuard implements CanActivate {
       old_password: string;
       new_password: string;
     } = request.body;
-    const { token }: { token?: string } = request.query;
+    const { access_token }: { access_token?: string } = request.headers;
     if (new_password === undefined && old_password === undefined) {
       return true;
     }
-    const prop = await this.jwtService.verifyAccessToken(token);
+    const prop = await this.jwtService.verifyAccessToken(access_token);
     const national_code = prop.national_code as string | undefined;
     const phone = prop.phone as string | undefined;
     const find = await this.userRepository.findOne({
@@ -162,15 +163,42 @@ export class ExistTokenInParamGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const { token }: { token?: string } = request.params;
-    if (!token)
+    const { access_token }: { access_token?: string } = request.params;
+    if (!access_token)
       throw new HttpException(
         EMessageHttpException.TOKEN_NOT_FOUND,
         HttpStatus.BAD_REQUEST,
       );
     else {
       try {
-        await this.jwtService.verifyRefreshToken(token);
+        await this.jwtService.verifyRefreshToken(access_token);
+      } catch (error) {
+        throw new HttpException(
+          EMessageHttpException.LOGIN_AGAIN,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+    return true;
+  }
+}
+
+@Injectable()
+export class ExistTokenInHeadersGuard implements CanActivate {
+  constructor(private readonly jwtService: JwtService) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
+    const { access_token }: { access_token?: string } = request.headers;
+    console.log(access_token);
+    if (!access_token)
+      throw new HttpException(
+        EMessageHttpException.TOKEN_NOT_FOUND,
+        HttpStatus.BAD_REQUEST,
+      );
+    else {
+      try {
+        await this.jwtService.verifyRefreshToken(access_token);
       } catch (error) {
         throw new HttpException(
           EMessageHttpException.LOGIN_AGAIN,
@@ -188,15 +216,15 @@ export class CheckIsExpiresTokenGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const { token }: { token?: string } = request.query;
-    if (!token)
+    const { access_token }: { access_token?: string } = request.headers;
+    if (!access_token)
       throw new HttpException(
         EMessageHttpException.TOKEN_NOT_FOUND,
         HttpStatus.BAD_REQUEST,
       );
     else {
       try {
-        await this.jwtService.verifyAccessToken(token);
+        await this.jwtService.verifyAccessToken(access_token);
         throw new HttpException(
           EMessageHttpException.TOKEN_IS_NOT_EXPIRES,
           HttpStatus.BAD_REQUEST,
@@ -214,15 +242,15 @@ export class CheckNotExpiresTokenGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const { token }: { token?: string } = request.query;
-    if (!token)
+    const { access_token }: { access_token?: string } = request.headers;
+    if (!access_token)
       throw new HttpException(
         EMessageHttpException.TOKEN_NOT_FOUND,
         HttpStatus.BAD_REQUEST,
       );
     else {
       try {
-        await this.jwtService.verifyAccessToken(token);
+        await this.jwtService.verifyAccessToken(access_token);
       } catch (error) {
         throw new HttpException(
           EMessageHttpException.LOGIN_AGAIN,
@@ -244,8 +272,8 @@ export class CheckSupportRoleGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const { token }: { token?: string } = request.query;
-    const prop = await this.jwtService.verifyAccessToken(token);
+    const { access_token }: { access_token?: string } = request.headers;
+    const prop = await this.jwtService.verifyAccessToken(access_token);
     const national_code = prop.national_code as string | undefined;
     const phone = prop.phone as string | undefined;
     if (!national_code && !phone) {
@@ -288,8 +316,8 @@ export class CheckExistAccountGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const { token }: { token?: string } = request.query;
-    const prop = await this.jwtService.verifyAccessToken(token);
+    const { access_token }: { access_token?: string } = request.headers;
+    const prop = await this.jwtService.verifyAccessToken(access_token);
     const national_code = prop.national_code as string | undefined;
     const phone = prop.phone as string | undefined;
     if (!national_code && !phone) {
@@ -321,8 +349,8 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const { token }: { token?: string } = request.query;
-    const prop = await this.jwtService.verifyAccessToken(token);
+    const { access_token }: { access_token?: string } = request.headers;
+    const prop = await this.jwtService.verifyAccessToken(access_token);
     const national_code = prop.national_code as string | undefined;
     const phone = prop.phone as string | undefined;
     if (!national_code && !phone) {
@@ -338,7 +366,7 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         dashboardCapabilityUser: { dashboard_capability: true },
       },
     });
-    
+
     if (!user) {
       throw new HttpException(
         EMessageHttpException.USER_NOT_FOUND,
