@@ -11,8 +11,10 @@ import { ProductMenuEntity } from 'src/modules/entity/mysql/Product.entity';
 import { CostPricingEntity } from 'src/modules/entity/mysql/CostPricing.entity';
 import { FactorItemEntity } from 'src/modules/entity/mysql/FactorItem.entity';
 import { FactorEntity } from 'src/modules/entity/mysql/Factor.entity';
+import { JwtModule } from 'src/modules/jwt/jwt.module';
+import { UserEntity } from 'src/modules/entity/mysql/User.entity';
 
-@Module({  
+@Module({
   imports: [
     TypeOrmModule.forFeature([
       ProductPricingEntity,
@@ -24,10 +26,11 @@ import { FactorEntity } from 'src/modules/entity/mysql/Factor.entity';
       CostPricingEntity,
       FactorEntity,
       FactorItemEntity,
+      UserEntity,
     ]),
-    // JwtModule,
+    JwtModule,
   ],
   controllers: [PricingController],
-  providers: [PricingService]
+  providers: [PricingService],
 })
 export class PricingModule {}

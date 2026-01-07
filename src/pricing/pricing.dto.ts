@@ -5,12 +5,28 @@ export class CreateUnitDto {
   unit_name: string;
 }
 
-export class ProductPricingDto {
+export class UpdateUnitDto {
+  @ApiProperty({ type: 'string' })
+  unit_name: string;
+
+  @ApiProperty({ type: 'string' })
+  product_unit_id: string;
+}
+
+export class CreateProductPricingDto {
   @ApiProperty({ type: 'string' })
   name: string;
 
   @ApiProperty({ type: 'number' })
-  gain: number;
+  buy: number;
+}
+
+export class UpdateProductPricingDto {
+  @ApiProperty({ type: 'string' })
+  name: string;
+
+  @ApiProperty({ type: 'number' })
+  buy: number;
 }
 
 export class CreateProductUnitDto {

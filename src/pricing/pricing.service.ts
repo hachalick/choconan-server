@@ -47,6 +47,18 @@ export class PricingService {
     return this.unitRepository.save(newUnit);
   }
 
+  async updateUnit({
+    product_unit_id,
+    name,
+  }: {
+    name: string;
+    product_unit_id: string;
+  }) {
+    const newUnit = this.unitRepository.update(product_unit_id, {
+      unit_name: name,
+    });
+  }
+
   async deleteUnit(unit_id: string) {
     await this.unitRepository.delete(unit_id);
     return { delete: true };
@@ -142,6 +154,7 @@ export class PricingService {
           const childUnitTotalCost = pricePerBaseUnit * childRatio;
 
           return {
+            product_unit_detail_id: detail.product_unit_detail_id,
             name: detail.ChildProductUnitDetail.product.name,
             unit: detail.ChildProductUnitDetail.unit.unit_name,
             amount: detail.amount,
@@ -188,10 +201,11 @@ export class PricingService {
 
     const sum_cost = cost
       .map((item) => item.price)
-      .reduce((a, b) => a + b || 0);
+      .reduce((a, b) => a + (b || 0), 0);
 
     const average_cost =
-      cost.map((item) => item.price).reduce((a, b) => a + b || 0) / diffDays;
+      cost.map((item) => item.price).reduce((a, b) => a + (b || 0), 0) /
+      diffDays;
 
     //#endregion
 
@@ -230,12 +244,12 @@ export class PricingService {
 
     const sum_count_sell = list_product_in_menu
       .map((item) => item.count_sell)
-      .reduce((a, b) => a + b || 0);
+      .reduce((a, b) => a + (b || 0), 0);
 
     const average_count_sell =
       list_product_in_menu
         .map((item) => item.count_sell)
-        .reduce((a, b) => a + b || 0) / diffDays;
+        .reduce((a, b) => a + (b || 0), 0) / diffDays;
 
     const base_balance =
       sum_cost / average_count_sell === Infinity
@@ -260,7 +274,7 @@ export class PricingService {
         average_count_sell,
         sum_balance: list_product_in_menu
           .map((item) => item.balance)
-          .reduce((a, b) => a + b),
+          .reduce((a, b) => a + (b || 0), 0),
         list: list_product_in_menu,
       },
       product_in_pricing: { list: pricingProduct },
@@ -281,25 +295,27 @@ export class PricingService {
       const res = await this.productPricingRepository.save(newProduct);
     }
 
-    return { created: true };
+    return { create: true };
   }
 
   async updateProduct({
     name,
     product_id,
+    buy,
   }: {
     product_id: string;
     name: string;
+    buy: number;
   }) {
     const product = await this.productPricingRepository.findOne({
       where: { product_id },
     });
 
     if (product) {
-      await this.productPricingRepository.update(product_id, { name });
+      await this.productPricingRepository.update(product_id, { name, buy });
     }
 
-    return { updated: true };
+    return { update: true };
   }
 
   async deleteProduct(product_id: string) {
@@ -666,7 +682,7 @@ export class PricingService {
 
     await this.costPricingRepository.save(newCost);
 
-    return { created: true };
+    return { create: true };
   }
 
   async updateCostProductPricing({
@@ -686,7 +702,7 @@ export class PricingService {
   async deleteCostProductPricing(cost_pricing_id: string) {
     await this.costPricingRepository.delete(cost_pricing_id);
 
-    return { updated: true };
+    return { update: true };
   }
 
   //#endregion

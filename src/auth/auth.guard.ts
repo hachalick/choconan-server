@@ -163,15 +163,15 @@ export class ExistTokenInParamGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const { access_token }: { access_token?: string } = request.params;
-    if (!access_token)
+    const { token }: { token?: string } = request.params;
+    if (!token)
       throw new HttpException(
         EMessageHttpException.TOKEN_NOT_FOUND,
         HttpStatus.BAD_REQUEST,
       );
     else {
       try {
-        await this.jwtService.verifyRefreshToken(access_token);
+        await this.jwtService.verifyRefreshToken(token);
       } catch (error) {
         throw new HttpException(
           EMessageHttpException.LOGIN_AGAIN,
@@ -569,14 +569,6 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
 
       if (isAccess) return isAccess;
 
-      // isAccess =
-      //   isAccess ||
-      //   (route.startsWith('/user/access') &&
-      //     method === 'get' &&
-      //     this.isAccess(user, EDashboardCapability.READ_));
-
-      // if (isAccess) return isAccess;
-
       isAccess =
         isAccess ||
         (route.startsWith('/menu/category-menu') &&
@@ -696,6 +688,150 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
         (route.startsWith('/file/image/') &&
           method === 'delete' &&
           this.isAccess(user, EDashboardCapability.DELETE_IMAGE));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/unit') &&
+          method === 'get' &&
+          this.isAccess(user, EDashboardCapability.READ_UNIT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/unit') &&
+          method === 'post' &&
+          this.isAccess(user, EDashboardCapability.CREATE_UNIT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/unit/') &&
+          method === 'put' &&
+          this.isAccess(user, EDashboardCapability.UPDATE_UNIT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/unit/') &&
+          method === 'delete' &&
+          this.isAccess(user, EDashboardCapability.DELETE_UNIT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/product') &&
+          method === 'get' &&
+          this.isAccess(user, EDashboardCapability.READ_PRODUCT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/product') &&
+          method === 'post' &&
+          this.isAccess(user, EDashboardCapability.CREATE_PRODUCT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/product/') &&
+          method === 'put' &&
+          this.isAccess(user, EDashboardCapability.UPDATE_PRODUCT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/product/') &&
+          method === 'delete' &&
+          this.isAccess(user, EDashboardCapability.DELETE_PRODUCT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/unit-product') &&
+          method === 'post' &&
+          this.isAccess(user, EDashboardCapability.CREATE_PRODUCT_UNIT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/unit-product/') &&
+          method === 'put' &&
+          this.isAccess(user, EDashboardCapability.UPDATE_PRODUCT_UNIT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/unit-product/') &&
+          method === 'delete' &&
+          this.isAccess(user, EDashboardCapability.DELETE_PRODUCT_UNIT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/detail-product-unit') &&
+          method === 'post' &&
+          this.isAccess(user, EDashboardCapability.CREATE_DETAIL_PRODUCT_UNIT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/detail-product-unit/') &&
+          method === 'put' &&
+          this.isAccess(user, EDashboardCapability.UPDATE_DETAIL_PRODUCT_UNIT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/detail-product-unit/') &&
+          method === 'put' &&
+          this.isAccess(user, EDashboardCapability.UPDATE_DETAIL_PRODUCT_UNIT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/detail-product-unit/') &&
+          method === 'delete' &&
+          this.isAccess(user, EDashboardCapability.DELETE_DETAIL_PRODUCT_UNIT_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/cost') &&
+          method === 'post' &&
+          this.isAccess(user, EDashboardCapability.CREATE_COST_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/cost/') &&
+          method === 'put' &&
+          this.isAccess(user, EDashboardCapability.UPDATE_COST_PRICING));
+
+      if (isAccess) return isAccess;
+
+      isAccess =
+        isAccess ||
+        (route.startsWith('/pricing/cost/') &&
+          method === 'delete' &&
+          this.isAccess(user, EDashboardCapability.DELETE_COST_PRICING));
 
       if (isAccess) return isAccess;
 

@@ -219,6 +219,57 @@ export class AuthService {
     await this.userService.createDashboardCapability(
       EDashboardCapability.READ_ROLE,
     );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.READ_UNIT_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.CREATE_UNIT_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.UPDATE_UNIT_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.DELETE_UNIT_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.READ_PRODUCT_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.CREATE_PRODUCT_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.UPDATE_PRODUCT_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.DELETE_PRODUCT_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.CREATE_PRODUCT_UNIT_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.UPDATE_PRODUCT_UNIT_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.DELETE_PRODUCT_UNIT_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.CREATE_DETAIL_PRODUCT_UNIT_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.UPDATE_DETAIL_PRODUCT_UNIT_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.DELETE_DETAIL_PRODUCT_UNIT_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.CREATE_COST_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.UPDATE_COST_PRICING,
+    );
+    await this.userService.createDashboardCapability(
+      EDashboardCapability.DELETE_COST_PRICING,
+    );
 
     //#endregion
 
@@ -513,6 +564,91 @@ export class AuthService {
       national_code,
       phone: '9353790881',
       capability_name: EDashboardCapability.READ_ROLE,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.READ_UNIT_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.CREATE_UNIT_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.UPDATE_UNIT_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.DELETE_UNIT_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.READ_PRODUCT_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.CREATE_PRODUCT_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.UPDATE_PRODUCT_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.DELETE_PRODUCT_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.CREATE_PRODUCT_UNIT_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.UPDATE_PRODUCT_UNIT_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.DELETE_PRODUCT_UNIT_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.CREATE_DETAIL_PRODUCT_UNIT_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.UPDATE_DETAIL_PRODUCT_UNIT_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.DELETE_DETAIL_PRODUCT_UNIT_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.CREATE_COST_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.UPDATE_COST_PRICING,
+    });
+    await this.userService.addDashboardCapabilityToUserByMobile({
+      national_code,
+      phone: '9353790881',
+      capability_name: EDashboardCapability.DELETE_COST_PRICING,
     });
 
     //#endregion
