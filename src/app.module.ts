@@ -16,6 +16,7 @@ import { ServiceModule } from './service/service.module';
 import { PricingModule } from './pricing/pricing.module';
 import { FactorItemEntity } from './modules/entity/mysql/FactorItem.entity';
 import { ProductMenuEntity } from './modules/entity/mysql/Product.entity';
+import { FactorEntity } from './modules/entity/mysql/Factor.entity';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ProductMenuEntity } from './modules/entity/mysql/Product.entity';
     }),
     TypeOrmModule.forFeature([
       ProductMenuEntity,
+      FactorEntity,
       FactorItemEntity,
     ]),
     CustomConfigsModule,

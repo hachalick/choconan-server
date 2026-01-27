@@ -593,8 +593,6 @@ export class CheckDashboardCapabilityGuard implements CanActivate {
 
       if (isAccess) return isAccess;
 
-      console.log(route);
-
       isAccess =
         isAccess ||
         (route.startsWith('/menu/product-menu/') &&

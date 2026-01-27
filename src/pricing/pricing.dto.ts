@@ -41,6 +41,9 @@ export class CreateProductUnitDto {
 
   @ApiProperty({ type: 'number' })
   ratio: number;
+
+  @ApiProperty({ type: 'number' })
+  profit: number;
 }
 
 export class UpdateProductUnitDto {
@@ -49,6 +52,12 @@ export class UpdateProductUnitDto {
 
   @ApiProperty({ type: 'string' })
   product_menu_id: string;
+
+  @ApiProperty({ type: 'string' })
+  profit: number;
+
+  @ApiProperty({ type: 'string' })
+  unit_id: string;
 }
 
 export class CreateDetailPricingProductDto {
@@ -65,6 +74,9 @@ export class CreateDetailPricingProductDto {
 export class UpdateDetailPricingProductDto {
   @ApiProperty({ type: 'number' })
   amount: number;
+
+  @ApiProperty({ type: 'string' })
+  product_unit_id: string;
 }
 
 export class CreateCostProductPricing {

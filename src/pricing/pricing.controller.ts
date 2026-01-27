@@ -45,12 +45,9 @@ export class PricingController {
   @UseGuards(CheckNotExpiresTokenGuard)
   createUnit(
     @Headers('access_token') access_token: string,
-    @Body() body: UpdateUnitDto,
+    @Body() body: CreateUnitDto,
   ) {
-    return this.pricingService.updateUnit({
-      name: body.unit_name,
-      product_unit_id: body.product_unit_id,
-    });
+    return this.pricingService.createUnit(body.unit_name);
   }
 
   @Put('unit/:id')
@@ -59,8 +56,12 @@ export class PricingController {
   updateUnit(
     @Headers('access_token') access_token: string,
     @Param('id') unit_id: string,
+    @Body() body: UpdateUnitDto,
   ) {
-    return this.pricingService.deleteUnit(unit_id);
+    return this.pricingService.updateUnit({
+      name: body.unit_name,
+      product_unit_id: body.product_unit_id,
+    });
   }
 
   @Delete('unit/:id')
@@ -130,6 +131,7 @@ export class PricingController {
       unit_id: body.unit_id,
       ratio: body.ratio,
       product_menu_id: body.product_menu_id,
+      profit: body.profit,
     });
   }
 
@@ -145,6 +147,8 @@ export class PricingController {
       product_unit_id: product_unit_id,
       ratio: body.ratio,
       product_menu_id: body.product_menu_id,
+      profit: body.profit,
+      unit_id: body.unit_id,
     });
   }
 
@@ -183,6 +187,7 @@ export class PricingController {
     return this.pricingService.updateDetailPricingProduct({
       amount: body.amount,
       detail_product_unit_id,
+      product_unit_id: body.product_unit_id,
     });
   }
 

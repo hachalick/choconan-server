@@ -23,8 +23,6 @@ import { RobotService } from 'src/robot/robot.service';
 
 @Injectable()
 export class OrderService {
-  private _counterFactor = 1;
-
   constructor(
     private readonly jwtService: JwtService,
     private readonly robotService: RobotService,
@@ -396,16 +394,35 @@ export class OrderService {
     location?: string;
     pay_status?: boolean;
   }> {
+    const nowFullDate = new Date();
+
+    const nowYear = nowFullDate.getFullYear();
+    const nowMonth = nowFullDate.getMonth() + 1;
+    const nowDay = nowFullDate.getDate() + 1;
+
+    const startToday = new Date(
+      `${nowYear}/${nowMonth}/${nowDay} 00:00:00`,
+    ).getTime();
+
+    let counterFactor = await this.factorRepository.count({
+      where: {
+        create_at: Between(
+          new Date(startToday - 1000 * 60 * 60 * 24),
+          new Date(startToday),
+        ),
+      },
+    });
+
+    counterFactor++;
+
     const newFactor = this.factorRepository.create({
-      factor_number: this._counterFactor,
+      factor_number: counterFactor,
       tax: 0,
       pay_status: false,
       create_at: new Date(),
       update_at: new Date(),
       location: '',
     });
-
-    this._counterFactor += 1;
 
     const {
       customer_mobile,
@@ -445,7 +462,7 @@ export class OrderService {
     try {
       await this.factorRepository.update(
         { factor_id },
-        { customer_mobile, factor_number, location, pay_status, tax },
+        { customer_mobile, location, pay_status, tax },
       );
       return { update: true };
     } catch (error) {
@@ -474,8 +491,43 @@ export class OrderService {
     factor_id: string;
   }): Promise<{ delete: boolean }> {
     try {
-      const res = await this.factorRepository.delete({ factor_id });
-      if (!res.affected) throw Error();
+      const findFactor = await this.factorRepository.findOne({
+        where: { factor_id },
+      });
+
+      const findFactorYear = findFactor.create_at.getFullYear();
+      const findFactorMonth = findFactor.create_at.getMonth() + 1;
+      const findFactorDay = findFactor.create_at.getDate() + 1;
+
+      const startFirstDay = new Date(
+        `${findFactorYear}/${findFactorMonth}/${findFactorDay} 00:00:00`,
+      ).getTime();
+      
+      if (findFactor) {
+        const res = await this.factorRepository.delete({ factor_id });
+
+        const listFactor = await this.factorRepository.find({
+          where: {
+            create_at: Between(
+              new Date(startFirstDay - 1000 * 60 * 60 * 24),
+              new Date(startFirstDay),
+            ),
+          },
+          order: { create_at: 'ASC' },
+        });
+
+        let counter = 1;
+
+        for (const item of listFactor) {
+          await this.factorRepository.update(item.factor_id, {
+            factor_number: counter,
+          });
+
+          counter++;
+        }
+
+        if (!res.affected) throw Error();
+      }
       return { delete: true };
     } catch (error) {
       return { delete: false };
@@ -545,7 +597,7 @@ export class OrderService {
           product_discount,
           product_name,
           product_price,
-          product_menu_id: product.product_id,
+          product_menu_id: product?.product_id,
         },
       );
       return { update: true };

@@ -7,10 +7,12 @@ import { MenuModule } from 'src/menu/menu.module';
 import { JwtModule } from 'src/modules/jwt/jwt.module';
 import { UserEntity } from 'src/modules/entity/mysql/User.entity';
 import { ImageEntity } from 'src/modules/entity/mysql/Image.entity';
+import { ProductMenuEntity } from 'src/modules/entity/mysql/Product.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      ProductMenuEntity,
       CategoryProductMenuEntity,
       UserEntity,
       ImageEntity,

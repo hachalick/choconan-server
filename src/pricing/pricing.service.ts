@@ -72,12 +72,7 @@ export class PricingService {
     await this.checkHaveRatioProductUnit();
 
     const listProduct = await this.productMenuRepository.find({
-      select: {
-        product_id: true,
-        price: true,
-        name: true,
-        src: true,
-      },
+      relations: { categoryProductMenu: true },
     });
 
     const fistFactor = await this.factorRepository.findOne({
@@ -102,10 +97,19 @@ export class PricingService {
           unit: true,
           productUnitDetailParent: {
             ChildProductUnitDetail: { product: true, unit: true },
+            ParentProductUnitDetail: { product: true, unit: true },
           },
         },
       },
-      order: { name: 'ASC', productUnit: { ratio: 'ASC' } },
+      order: {
+        name: 'ASC',
+        productUnit: {
+          unit: { unit_name: 'ASC' },
+          productUnitDetailParent: {
+            ChildProductUnitDetail: { product: { name: 'ASC' } },
+          },
+        },
+      },
     });
 
     const unitLookup = new Map();
@@ -162,10 +166,10 @@ export class PricingService {
             ratio: childRatio,
             price_by_unit: pricePerBaseUnit,
             total_price_by_unit: pricePerBaseUnit * detail.amount,
-            // jomle: `مقدار ${detail.amount} ${detail.ChildProductUnitDetail.unit.unit_name} ${detail.ChildProductUnitDetail.product.name} مصرف شده`,
-            // jomle2: `هر ${childRatio} ${detail.ChildProductUnitDetail.unit.unit_name} ${detail.ChildProductUnitDetail.product.name} ${childUnitTotalCost} تومان`,
-            // jomle3: `هر یک ${detail.ChildProductUnitDetail.unit.unit_name} ${detail.ChildProductUnitDetail.product.name} ${pricePerBaseUnit} تومان`,
-            // jomle4: `برای ${detail.amount} ${detail.ChildProductUnitDetail.unit.unit_name} ${detail.ChildProductUnitDetail.product.name} ${pricePerBaseUnit * detail.amount} تومان`,
+            child_product_unit_id:
+              detail.ChildProductUnitDetail.product_unit_id,
+            parent_product_unit_id:
+              detail.ParentProductUnitDetail.product_unit_id,
           };
         });
 
@@ -180,8 +184,10 @@ export class PricingService {
                 (itemList) => itemList.product_id === item.product_menu_id,
               ) || null
             : null,
+          product_menu_id: item.product_menu_id,
           product_unit_id: item.product_unit_id,
           unit_name: item.unit.unit_name,
+          unit_id: item.unit.unit_id,
           ratio: item.ratio,
           profit: item.profit,
           sum_detail: sumDetail,
@@ -204,8 +210,8 @@ export class PricingService {
       .reduce((a, b) => a + (b || 0), 0);
 
     const average_cost =
-      cost.map((item) => item.price).reduce((a, b) => a + (b || 0), 0) /
-      diffDays;
+      (cost.map((item) => item.price).reduce((a, b) => a + (b || 0), 0) * 12) /
+      365.25;
 
     //#endregion
 
@@ -222,6 +228,9 @@ export class PricingService {
 
             return {
               product_id_in_menu: item2.price_in_menu.product_id,
+              product_category_id_in_menu:
+                item2.price_in_menu.categoryProductMenu.category,
+              product_number_id_in_menu: item2.price_in_menu.id,
               name_in_menu: item2.price_in_menu.name,
               price_in_menu: item2.price_in_menu.price,
               product_id_in_pricing: item1.product_id,
@@ -252,9 +261,9 @@ export class PricingService {
         .reduce((a, b) => a + (b || 0), 0) / diffDays;
 
     const base_balance =
-      sum_cost / average_count_sell === Infinity
+      average_cost / average_count_sell === Infinity
         ? 0
-        : sum_cost / average_count_sell;
+        : average_cost / average_count_sell;
 
     list_product_in_menu.forEach((item) => {
       item.balance = (item.profit_pricing - base_balance) * item.count_sell;
@@ -267,6 +276,7 @@ export class PricingService {
       cost: {
         sum_cost,
         average_cost,
+        item_cost: base_balance,
         list: cost,
       },
       product_in_menu: {
@@ -293,9 +303,9 @@ export class PricingService {
       });
 
       const res = await this.productPricingRepository.save(newProduct);
-    }
 
-    return { create: true };
+      return { product_id: res.product_id, buy: res.buy, name: res.name };
+    }
   }
 
   async updateProduct({
@@ -338,11 +348,13 @@ export class PricingService {
     unit_id,
     ratio,
     product_menu_id,
+    profit,
   }: {
     unit_id: string;
     product_id: string;
     product_menu_id: string;
     ratio: number;
+    profit: number;
   }) {
     const product = await this.productPricingRepository.findOne({
       where: { product_id },
@@ -362,34 +374,50 @@ export class PricingService {
           unit,
           ratio,
           product_menu_id,
+          profit,
         });
 
-        await this.productUnitRepository.save(newProductUnit);
+        const res = await this.productUnitRepository.save(newProductUnit);
+
+        return {
+          ratio: res.ratio,
+          product_menu_id: res.product_menu_id,
+          product_unit_id: res.product_unit_id,
+          profit: res.profit,
+          unit_id: res.unit.unit_id,
+          product_id: res.product.product_id,
+        };
       }
     }
-
-    return {
-      created: true,
-    };
   }
 
   async updateUnitToProduct({
+    unit_id,
     product_unit_id,
     product_menu_id,
     ratio,
+    profit,
   }: {
+    unit_id: string;
     product_unit_id: string;
     product_menu_id: string;
     ratio: number;
+    profit: number;
   }) {
     const productUnit = await this.productUnitRepository.findOne({
       where: { product_unit_id },
     });
 
-    if (productUnit) {
+    console.log(product_menu_id);
+
+    const unit = await this.unitRepository.findOne({ where: { unit_id } });
+
+    if (productUnit && unit) {
       await this.productUnitRepository.update(productUnit.product_unit_id, {
         ratio,
         product_menu_id,
+        profit,
+        unit,
       });
     }
 
@@ -487,22 +515,59 @@ export class PricingService {
           ParentProductUnitDetail: parent,
         });
 
-        await this.productUnitDetailRepository.save(newProductUnitDetail);
+        const res =
+          await this.productUnitDetailRepository.save(newProductUnitDetail);
+
+        return {
+          product_unit_detail_id: res.product_unit_detail_id,
+          amount: res.amount,
+        };
       }
     }
-
-    return { created: true };
   }
 
   async updateDetailPricingProduct({
     detail_product_unit_id,
     amount,
+    product_unit_id,
   }: {
     amount: number;
     detail_product_unit_id: string;
-  }) {}
+    product_unit_id: string;
+  }) {
+    const findProductUnitDetail =
+      await this.productUnitDetailRepository.findOne({
+        where: { product_unit_detail_id: detail_product_unit_id },
+      });
 
-  async deleteDetailPricingProduct(detail_product_unit_id: string) {}
+    const child = await this.productUnitRepository.findOne({
+      where: { product_unit_id: product_unit_id },
+    });
+
+    if (findProductUnitDetail && child) {
+      await this.productUnitDetailRepository.update(
+        findProductUnitDetail.product_unit_detail_id,
+        { amount, ChildProductUnitDetail: child },
+      );
+    }
+
+    return { update: true };
+  }
+
+  async deleteDetailPricingProduct(detail_product_unit_id: string) {
+    const findProductUnitDetail =
+      await this.productUnitDetailRepository.findOne({
+        where: { product_unit_detail_id: detail_product_unit_id },
+      });
+
+    if (findProductUnitDetail) {
+      await this.productUnitDetailRepository.delete(
+        findProductUnitDetail.product_unit_detail_id,
+      );
+    }
+
+    return { delete: true };
+  }
 
   //#endregion
 
@@ -696,7 +761,7 @@ export class PricingService {
   }) {
     await this.costPricingRepository.update(cost_pricing_id, { name, price });
 
-    return { updated: true };
+    return { update: true };
   }
 
   async deleteCostProductPricing(cost_pricing_id: string) {

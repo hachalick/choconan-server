@@ -7,7 +7,16 @@ import { CategoryProductMenuEntity } from 'src/modules/entity/mysql/CategoryProd
 import { ImageEntity } from 'src/modules/entity/mysql/Image.entity';
 import { EMessageHttpException } from 'src/modules/enum/message-http-exception.enum';
 import { Repository } from 'typeorm';
-import { utils as utilsExcel, read as readExcel } from 'xlsx';
+import {
+  utils as utilsExcel,
+  read as readExcel,
+  writeFileXLSX,
+  WorkBook,
+  WorkSheet,
+} from 'xlsx';
+import * as XLSX from 'xlsx';
+import { Response } from 'express';
+import { ProductMenuEntity } from 'src/modules/entity/mysql/Product.entity';
 
 @Injectable()
 export class FileService {
@@ -15,9 +24,55 @@ export class FileService {
     private readonly menuService: MenuService,
     @InjectRepository(CategoryProductMenuEntity)
     private readonly categoryProductMenuRepository: Repository<CategoryProductMenuEntity>,
+    @InjectRepository(ProductMenuEntity)
+    private readonly productMenuRepository: Repository<ProductMenuEntity>,
     @InjectRepository(ImageEntity)
     private readonly imageRepository: Repository<ImageEntity>,
   ) {}
+
+  async downloadFileExcelMenu(res: Response) {
+    const wb = XLSX.utils.book_new();
+
+    const productMenu = (
+      await this.categoryProductMenuRepository.find({
+        where: {},
+        relations: { products: true },
+      })
+    )
+      .map((p) =>
+        p.products.map((c) => ({
+          category: p.category,
+          name: c.name,
+          price: c.price,
+        })),
+      )
+      .flat()
+      .map((p) => ({ دسته: p.category, 'نام محصول': p.name, قیمت: p.price }));
+
+    const wsProductMenu = XLSX.utils.json_to_sheet(productMenu);
+
+    wsProductMenu['!freeze'] = { ySplit: 1 };
+
+    wsProductMenu['A1'].s = { font: { bold: true } };
+    wsProductMenu['B1'].s = { font: { bold: true } };
+    wsProductMenu['C1'].s = { font: { bold: true } };
+
+    XLSX.utils.book_append_sheet(wb, wsProductMenu, 'ProductMenu');
+
+    const buffer = XLSX.write(wb, {
+      bookType: 'xlsx',
+      type: 'buffer',
+    });
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+
+    res.setHeader('Content-Disposition', 'attachment; filename=report.xlsx');
+
+    res.end(buffer);
+  }
 
   async uploadFileExcel({ file }: { file: Express.Multer.File }) {
     const allMenu: TCategoriesMenu = [];

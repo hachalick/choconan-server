@@ -234,6 +234,7 @@ export class MenuService {
     snap,
     tapsi,
   }: TProductMenu & { product_id: string }) {
+    console.log(name, price)
     await this.productMenuRepository.update(
       {
         product_id,

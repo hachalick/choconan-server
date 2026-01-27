@@ -8,6 +8,7 @@ import {
   ParseFilePipeBuilder,
   Post,
   Query,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -20,11 +21,17 @@ import {
 } from 'src/auth/auth.guard';
 import { UploadFileDto } from 'src/menu/menu.dto';
 import { FileService } from './file.service';
+import { Response } from 'express';
 
 @ApiTags('File')
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
+
+  @Get('export')
+  exportExcel(@Res() res: Response) {
+    this.fileService.downloadFileExcelMenu(res)
+  }
 
   @Post('excel-menu')
   @UseGuards(CheckDashboardCapabilityGuard)
@@ -74,7 +81,8 @@ export class FileController {
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({
-          fileType: /image\/(jpg|jpeg|png|webp|Jpg|Jpeg|Png|Webp|JPG|JPEG|PNG|WEBP)/,
+          fileType:
+            /image\/(jpg|jpeg|png|webp|Jpg|Jpeg|Png|Webp|JPG|JPEG|PNG|WEBP)/,
         })
         .addMaxSizeValidator({
           maxSize: 1024 * 1024 * 10,

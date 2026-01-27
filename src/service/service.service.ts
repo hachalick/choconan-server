@@ -25,8 +25,8 @@ export class ServiceService {
 
   async sendSmsOtp({ phone, otp }: { phone: string; otp: string }) {
     console.log(otp);
-    const url = `http://api.kavenegar.com/v1/48616B676E304D67684D72533248362F374B4C554C6855796E55754879565371663937545964707A5344453D/verify/lookup.json?receptor=${phone}&token=${otp}&template=${ESmsTemplate.VERIFYCHOCONAN}`;
-    await fetch(url);
+    // const url = `http://api.kavenegar.com/v1/48616B676E304D67684D72533248362F374B4C554C6855796E55754879565371663937545964707A5344453D/verify/lookup.json?receptor=${phone}&token=${otp}&template=${ESmsTemplate.VERIFYCHOCONAN}`;
+    // await fetch(url);
   }
 
   async getCrawlerMenuSnapFood(): Promise<{
