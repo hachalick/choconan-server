@@ -19,13 +19,13 @@ export class ServiceService {
   }
 
   async sendSmsWelcomeUser({ fullname, phone }: TWelcomeUser) {
-    const url = `http://api.kavenegar.com/v1/48616B676E304D67684D72533248362F374B4C554C6855796E55754879565371663937545964707A5344453D/verify/lookup.json?receptor=${phone}&token=${fullname}&template=${ESmsTemplate.WELCOMECHONONAN}`;
+    const url = `http://api.kavenegar.com/v1/${this.TOKEN_SMS}/verify/lookup.json?receptor=${phone}&token=${fullname}&template=${ESmsTemplate.WELCOMECHONONAN}`;
     await fetch(url);
   }
 
   async sendSmsOtp({ phone, otp }: { phone: string; otp: string }) {
     console.log(otp);
-    const url = `http://api.kavenegar.com/v1/48616B676E304D67684D72533248362F374B4C554C6855796E55754879565371663937545964707A5344453D/verify/lookup.json?receptor=${phone}&token=${otp}&template=${ESmsTemplate.VERIFYCHOCONAN}`;
+    const url = `http://api.kavenegar.com/v1/${this.TOKEN_SMS}/verify/lookup.json?receptor=${phone}&token=${otp}&template=${ESmsTemplate.VERIFYCHOCONAN}`;
     await fetch(url);
   }
 
