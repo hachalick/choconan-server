@@ -1,4 +1,4 @@
-import { CheckDashboardCapabilityGuard } from './../auth/auth.guard';
+import { CheckDashboardCapabilityGuard } from '../auth/auth.guard';
 import {
   Body,
   Controller,
@@ -14,7 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { OrderTableDto, UpdateOrderDto, UpdateOrderItemDto } from './order.dto';
-import { SocketOrderGateway } from './../socket_order/socket_order.gateway';
+import { SocketOrderGateway } from '../socket_order/socket_order.gateway';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { OrderService } from './order.service';
 import { CheckNotExpiresTokenGuard } from 'src/auth/auth.guard';

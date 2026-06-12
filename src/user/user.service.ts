@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { DashboardCapabilityUser } from './../modules/entity/mysql/DashboardCapabilityUser';
-import { RoleUserEntity } from './../modules/entity/mysql/RoleUser.entity';
-import { RoleEntity } from './../modules/entity/mysql/Role.entity';
+import { DashboardCapabilityUser } from '../modules/entity/mysql/DashboardCapabilityUser';
+import { RoleUserEntity } from '../modules/entity/mysql/RoleUser.entity';
+import { RoleEntity } from '../modules/entity/mysql/Role.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/modules/entity/mysql/User.entity';
 import { JwtService } from 'src/modules/jwt/jwt.service';
@@ -9,7 +9,7 @@ import { Not, Repository } from 'typeorm';
 import { DashboardCapability } from 'src/modules/entity/mysql/DashboardCapability';
 import { ConfigService } from '@nestjs/config';
 import { hashPassword } from 'src/modules/utils/hash';
-import { ServiceService } from 'src/service/service.service';
+// import { ServiceService } from 'src/service/service.service';
 
 @Injectable()
 export class UserService {
@@ -39,15 +39,17 @@ export class UserService {
         dashboardCapabilityUser: { dashboard_capability: true },
       },
     });
-    return {
-      name: user.name,
-      family: user.family,
-      profile: user.profile,
-      role: user.rolesUser.map((val) => val.role.role_name),
-      access: user.dashboardCapabilityUser.map(
-        (val) => val.dashboard_capability.dashboard_capability,
-      ),
-    };
+    if (user) {
+      return {
+        name: user.name,
+        family: user.family,
+        profile: user.profile,
+        role: user.rolesUser.map((val) => val.role.role_name),
+        access: user.dashboardCapabilityUser.map(
+          (val) => val.dashboard_capability.dashboard_capability,
+        ),
+      };
+    }
   }
 
   async getAllUser() {
@@ -82,21 +84,22 @@ export class UserService {
         },
         where: { user_id },
       });
-      return {
-        user_id: existUser.user_id,
-        name: existUser.name,
-        family: existUser.family,
-        phone: existUser.phone,
-        national_code: existUser.national_code,
-        profile: existUser.profile,
-        update_account: existUser.update_at,
-        create_account: existUser.create_at,
-        role: existUser.rolesUser.map((val) => val.role.role_name),
-        access: existUser.dashboardCapabilityUser.map(
-          (val) => val.dashboard_capability.dashboard_capability,
-        ),
-      };
-    } catch (ex) {
+      if (existUser)
+        return {
+          user_id: existUser.user_id,
+          name: existUser.name,
+          family: existUser.family,
+          phone: existUser.phone,
+          national_code: existUser.national_code,
+          profile: existUser.profile,
+          update_account: existUser.update_at,
+          create_account: existUser.create_at,
+          role: existUser.rolesUser.map((val) => val.role.role_name),
+          access: existUser.dashboardCapabilityUser.map(
+            (val) => val.dashboard_capability.dashboard_capability,
+          ),
+        };
+    } catch {
       return undefined;
     }
   }
@@ -114,7 +117,7 @@ export class UserService {
     name?: string;
     family?: string;
   }) {
-    const key = this.configService.get('App.token_hash_password');
+    const key = this.configService.get('App.token_hash_password') as string;
     const hashPass = hashPassword(password, key);
 
     national_code = national_code === '' ? '98' : national_code;
@@ -125,7 +128,7 @@ export class UserService {
         national_code,
       },
     });
-    if (!!!exiAccount) {
+    if (!exiAccount) {
       // create a account
       try {
         const newAccount = this.userRepository.create({
@@ -137,7 +140,9 @@ export class UserService {
         });
         const resultCreate = await this.userRepository.save(newAccount);
         return { create: true, user_id: resultCreate.user_id };
-      } catch (error) {}
+      } catch {
+        return { create: false };
+      }
     }
     return { create: false };
   }
@@ -156,7 +161,7 @@ export class UserService {
         user_id,
       },
     });
-    if (!!exiAccount) {
+    if (exiAccount) {
       const resultUpdate = await this.userRepository.update(
         { user_id },
         {
@@ -166,7 +171,9 @@ export class UserService {
           family: user.family,
         },
       );
-      return { update: resultUpdate.affected > 0 ? true : false };
+      if (resultUpdate.affected) {
+        return { update: resultUpdate.affected > 0 ? true : false };
+      }
     }
     return { update: false };
   }
@@ -177,10 +184,15 @@ export class UserService {
         user_id,
       },
     });
-    if (!!exiAccount) {
+
+    if (exiAccount) {
       const resultDelete = await this.userRepository.delete({ user_id });
-      return { delete: resultDelete.affected > 0 ? true : false };
+
+      if (resultDelete.affected) {
+        return { delete: resultDelete.affected > 0 ? true : false };
+      }
     }
+
     return { delete: false };
   }
 
@@ -207,15 +219,21 @@ export class UserService {
       await this.dashboardCapabilityRepository.findOne({
         where: { dashboard_capability: capability_name },
       });
-    const exiDashboardCapability = await this.dashboardUserRepository.findOne({
-      where: { user, dashboard_capability: dashboardCapability },
-    });
-    if (!exiDashboardCapability) {
-      const newDashboardCapability = this.dashboardUserRepository.create({
-        dashboard_capability: dashboardCapability,
-        user,
-      });
-      await this.dashboardUserRepository.save(newDashboardCapability);
+
+    if (dashboardCapability && user) {
+      const exiDashboardCapability = await this.dashboardUserRepository.findOne(
+        {
+          where: { user, dashboard_capability: dashboardCapability },
+        },
+      );
+
+      if (!exiDashboardCapability) {
+        const newDashboardCapability = this.dashboardUserRepository.create({
+          dashboard_capability: dashboardCapability,
+          user,
+        });
+        await this.dashboardUserRepository.save(newDashboardCapability);
+      }
     }
   }
 
@@ -231,8 +249,14 @@ export class UserService {
 
     const user = await this.userRepository.findOne({ where: { user_id } });
 
-    if (user.phone === '9353790881' && user.national_code === '98' && !admin) {
-      return { add: false };
+    if (user) {
+      if (
+        user.phone === '9353790881' &&
+        user.national_code === '98' &&
+        !admin
+      ) {
+        return { add: false };
+      }
     }
 
     if (dashboardCapability && user) {
@@ -242,7 +266,7 @@ export class UserService {
         },
       );
 
-      if (!!!exiDashboardCapability) {
+      if (!exiDashboardCapability) {
         const newDashboardCapability = this.dashboardUserRepository.create({
           dashboard_capability: dashboardCapability,
           user,
@@ -267,30 +291,37 @@ export class UserService {
 
     const user = await this.userRepository.findOne({ where: { user_id } });
 
-    if (user.phone === '9353790881' && user.national_code === '98' && !admin) {
-      return { add: false };
-    }
-
-    if (dashboardCapability && user) {
-      const exiDashboardCapability = await this.dashboardUserRepository.findOne(
-        {
-          where: { user, dashboard_capability: dashboardCapability },
-        },
-      );
-
-      if (!!exiDashboardCapability) {
-        const newDashboardCapability =
-          await this.dashboardUserRepository.findOne({
-            where: {
-              dashboard_capability: dashboardCapability,
-              user,
-            },
-          });
-        await this.dashboardUserRepository.delete(newDashboardCapability);
-        return { remove: true };
+    if (user) {
+      if (
+        user.phone === '9353790881' &&
+        user.national_code === '98' &&
+        !admin
+      ) {
+        return { add: false };
       }
+
+      if (dashboardCapability && user) {
+        const exiDashboardCapability =
+          await this.dashboardUserRepository.findOne({
+            where: { user, dashboard_capability: dashboardCapability },
+          });
+
+        if (exiDashboardCapability) {
+          const newDashboardCapability =
+            await this.dashboardUserRepository.findOne({
+              where: {
+                dashboard_capability: dashboardCapability,
+                user,
+              },
+            });
+          if (newDashboardCapability) {
+            await this.dashboardUserRepository.delete(newDashboardCapability);
+            return { remove: true };
+          }
+        }
+      }
+      return { remove: false };
     }
-    return { remove: false };
   }
 
   async createDashboardCapability(capability_name: string) {
@@ -318,18 +349,22 @@ export class UserService {
     const account = await this.userRepository.findOne({
       where: { phone, national_code },
     });
+
     const role = await this.roleRepository.findOne({
       where: { role_name },
     });
-    const exiRoleUser = await this.roleUserRepository.findOne({
-      where: { user: account, role: role },
-    });
-    if (!exiRoleUser) {
-      const newRoleUser = this.roleUserRepository.create({
-        user: account,
-        role: role,
+
+    if (account && role) {
+      const exiRoleUser = await this.roleUserRepository.findOne({
+        where: { user: account, role: role },
       });
-      await this.roleUserRepository.save(newRoleUser);
+      if (!exiRoleUser) {
+        const newRoleUser = this.roleUserRepository.create({
+          user: account,
+          role: role,
+        });
+        await this.roleUserRepository.save(newRoleUser);
+      }
     }
   }
 
@@ -352,7 +387,7 @@ export class UserService {
       where: { role_name },
     });
 
-    if (!!!existRole) {
+    if (!existRole) {
       const newRoleRepository = this.roleRepository.create({ role_name });
       await this.roleRepository.save(newRoleRepository);
       return { create: true };
@@ -405,7 +440,7 @@ export class UserService {
         { name, family },
       );
       return { update: true };
-    } catch (error) {
+    } catch {
       return { update: false };
     }
   }

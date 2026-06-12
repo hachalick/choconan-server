@@ -19,7 +19,7 @@ export class RobotService {
     private readonly categoryProductMenuRepository: Repository<CategoryProductMenuEntity>,
   ) {
     this.list_id_admin = this.configService.get<string[]>('Tel.list_id_admin');
-    const token = this.configService.get('Tel.token');
+    const token = this.configService.get<string>('Tel.token');
     this.bot = new Telegraf(token);
     this.start();
     this.see_menu();
@@ -50,29 +50,29 @@ export class RobotService {
   }
 
   public async sendMessageToAdminChat(text: string) {
-    try {
-      this.list_id_admin.forEach(async (id_admin) => {
-        try {
-          await this.bot.telegram.sendMessage(id_admin, text);
-        } catch (ex) {
-          console.log(ex);
-        }
-      });
-    } catch (error) {}
+    for (const item of this.list_id_admin) {
+      try {
+        await this.bot.telegram.sendMessage(item, text);
+      } catch {
+        //
+      }
+    }
   }
 
   private async launch() {
     try {
       await this.bot.launch();
-    } catch (error) {}
+    } catch {
+      //
+    }
   }
 
   private start() {
     try {
       this.bot.start(async (ctx) => {
-        ctx.reply('سلام من ربات شوکونان هستم');
+        await ctx.reply('سلام من ربات شوکونان هستم');
         await this.replayHelp(ctx);
-        this.list_id_admin.forEach(async (id_admin) => {
+        for (const id_admin of this.list_id_admin) {
           const { id, first_name, username } = ctx.chat as {
             id: number;
             first_name?: string;
@@ -86,14 +86,16 @@ export class RobotService {
           } catch (ex) {
             console.log(ex);
           }
-        });
+        }
       });
-    } catch (error) {}
+    } catch {
+      //
+    }
   }
 
-  private async replayHelp(ctx) {
+  private async replayHelp(ctx: any) {
     try {
-      ctx.reply('چه کمکی از دستم برمیاد براتون ؟', {
+      await ctx.reply('چه کمکی از دستم برمیاد براتون ؟', {
         reply_markup: {
           inline_keyboard: [
             [
@@ -105,7 +107,9 @@ export class RobotService {
           ],
         },
       });
-    } catch (error) {}
+    } catch {
+      //
+    }
   }
 
   private help() {
@@ -300,9 +304,9 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      for (const i in allMenu) {
-        ctx.reply(this.json_to_text_category_product(allMenu[i].products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      for (const menu of allMenu) {
+        await ctx.reply(this.json_to_text_category_product(menu.products));
       }
       await this.replayHelp(ctx);
     });
@@ -316,8 +320,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -330,8 +334,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -344,8 +348,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -358,8 +362,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -372,8 +376,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -386,8 +390,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -400,8 +404,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -414,8 +418,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -428,8 +432,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -442,8 +446,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -456,8 +460,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -470,8 +474,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -484,8 +488,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -498,8 +502,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -512,8 +516,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -526,8 +530,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -540,8 +544,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -554,8 +558,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -568,8 +572,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -582,8 +586,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }
@@ -596,8 +600,8 @@ ${list_product.length - 1 == Number(item) ? '' : '☕️🥤🍫🍪🍰🥐🥗
         order: { products: { id: 'ASC' }, category: 'ASC' },
       });
       const userId = ctx.update.callback_query.from.id;
-      this.bot.telegram.sendChatAction(userId, 'typing');
-      ctx.reply(this.json_to_text_category_product(singleMenu.products));
+      await this.bot.telegram.sendChatAction(userId, 'typing');
+      await ctx.reply(this.json_to_text_category_product(singleMenu.products));
       await this.replayHelp(ctx);
     });
   }

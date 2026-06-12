@@ -7,7 +7,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -39,7 +38,10 @@ export class UserController {
 
   @Put('account')
   @UseGuards(CheckNotExpiresTokenGuard)
-  updateProfile(@Headers('access_token') access_token: string, @Body() body: updateProfileDto) {
+  updateProfile(
+    @Headers('access_token') access_token: string,
+    @Body() body: updateProfileDto,
+  ) {
     const { family, name } = body;
     return this.userService.updateProfile({
       family,
@@ -71,7 +73,10 @@ export class UserController {
   @UseGuards(CheckExistAccountGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
-  createUser(@Headers('access_token') access_token: string, @Body() body: createUserDto) {
+  createUser(
+    @Headers('access_token') access_token: string,
+    @Body() body: createUserDto,
+  ) {
     const { national_code, phone, family, name } = body;
     return this.userService.createUser({
       national_code,
@@ -170,7 +175,10 @@ export class UserController {
   @UseGuards(CheckExistAccountGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
-  createRole(@Headers('access_token') access_token: string, @Body() body: CreateRoleDto) {
+  createRole(
+    @Headers('access_token') access_token: string,
+    @Body() body: CreateRoleDto,
+  ) {
     return this.userService.createRole(body.role_name);
   }
 
@@ -190,7 +198,10 @@ export class UserController {
   @UseGuards(CheckExistAccountGuard)
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckDashboardCapabilityGuard)
-  deleteRole(@Headers('access_token') access_token: string, @Param('role_id') role_id: string) {
+  deleteRole(
+    @Headers('access_token') access_token: string,
+    @Param('role_id') role_id: string,
+  ) {
     return this.userService.deleteRole(role_id);
   }
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BlogEntity } from './../modules/entity/mysql/Blog.entity';
+import { BlogEntity } from '../modules/entity/mysql/Blog.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 

@@ -11,12 +11,17 @@ import { RoleUserEntity } from 'src/modules/entity/mysql/RoleUser.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity, RoleEntity, DashboardCapability, DashboardCapabilityUser, RoleUserEntity]),
+    TypeOrmModule.forFeature([
+      UserEntity,
+      RoleEntity,
+      DashboardCapability,
+      DashboardCapabilityUser,
+      RoleUserEntity,
+    ]),
     JwtModule,
   ],
   controllers: [UserController],
   providers: [UserService],
-  exports: [UserService]
+  exports: [UserService],
 })
-
 export class UserModule {}

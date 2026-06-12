@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Header,
-  Headers,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { WelcomeUserDto } from './service.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ServiceService } from './service.service';

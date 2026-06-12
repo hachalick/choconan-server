@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { KavenegarApi } from 'kavenegar';
+// import { KavenegarApi } from 'kavenegar';
 import { ProductMenuEntity } from 'src/modules/entity/mysql/Product.entity';
 import { ESmsTemplate } from 'src/modules/enum/kavenegar.enum';
 import { Repository } from 'typeorm';

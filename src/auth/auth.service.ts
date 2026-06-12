@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserService } from './../user/user.service';
+import { UserService } from '../user/user.service';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OtpEntity } from 'src/modules/entity/mysql/Otp.entity';

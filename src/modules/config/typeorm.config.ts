@@ -3,7 +3,7 @@ import { PresentOrderTableEntity } from '../entity/mysql/PresentOrderTable.entit
 import { FactorPresentOrderEntity } from '../entity/mysql/FactorPresentOrder.entity';
 import { ProductMenuEntity } from '../entity/mysql/Product.entity';
 import { CategoryProductMenuEntity } from '../entity/mysql/CategoryProduct.entity';
-import { BlogEntity } from './../entity/mysql/Blog.entity';
+import { BlogEntity } from '../entity/mysql/Blog.entity';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { UserEntity } from '../entity/mysql/User.entity';
