@@ -1,4 +1,4 @@
-type TWelcomeUser = {
+export type TWelcomeUser = {
   fullname: string;
   phone: string;
 };

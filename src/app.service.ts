@@ -6,6 +6,7 @@ import { ProductMenuEntity } from './modules/entity/mysql/Product.entity';
 import { Between, In, IsNull, Not, Repository } from 'typeorm';
 import { FactorItemEntity } from './modules/entity/mysql/FactorItem.entity';
 import { FactorEntity } from './modules/entity/mysql/Factor.entity';
+import { TProductsMenu } from './modules/types/fetch.type';
 
 @Injectable()
 export class AppService {
@@ -19,7 +20,10 @@ export class AppService {
   ) {}
 
   getAllVideo() {
-    const allMenu = [];
+    const allMenu: {
+      category: string;
+      products: TProductsMenu;
+    }[] = [];
     const sheet_name_list = allCategoryVideos.map((val) => val.category);
     const workbook = readFileExcel('src/modules/assets/excel/video.xlsx');
     for (let i = 0; i < sheet_name_list.length; i++) {

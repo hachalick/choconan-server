@@ -19,13 +19,12 @@ import { FactorItemEntity } from 'src/modules/entity/mysql/FactorItem.entity';
 import * as moment from 'moment-jalaali';
 import { JwtService } from 'src/modules/jwt/jwt.service';
 import { UserEntity } from 'src/modules/entity/mysql/User.entity';
-import { RobotService } from 'src/robot/robot.service';
+import { TDetailOrders } from 'src/modules/types/order';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly robotService: RobotService,
     @InjectRepository(ProductMenuEntity)
     private readonly productMenuRepository: Repository<ProductMenuEntity>,
     @InjectRepository(PresentOrderTableEntity)
@@ -149,10 +148,6 @@ export class OrderService {
         present_order_table_id: table_id,
       },
       { busy: true },
-    );
-
-    await this.robotService.sendMessageToAdminChat(
-      `سفارش جدید برای میز ${(await this.presentOrderTableRepository.findOne({ where: { present_order_table_id: table_id } })).table} ایجاد شد.`,
     );
 
     const resTable = await this.presentOrderTableRepository.findOne({
@@ -502,7 +497,7 @@ export class OrderService {
       const startFirstDay = new Date(
         `${findFactorYear}/${findFactorMonth}/${findFactorDay} 00:00:00`,
       ).getTime();
-      
+
       if (findFactor) {
         const res = await this.factorRepository.delete({ factor_id });
 

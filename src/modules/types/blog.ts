@@ -1,4 +1,4 @@
-type TBlog = {
+export type TBlog = {
   meta_title: string;
   publish: boolean;
   short_description: string;
@@ -7,4 +7,4 @@ type TBlog = {
   blog: string;
 };
 
-type TIdBlog = TBlog & { id: string };
+export type TIdBlog = TBlog & { id: string };

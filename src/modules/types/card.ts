@@ -1,4 +1,4 @@
-// type TProductMenu = {
+// export type TProductMenu = {
 //   id: number;
 //   available: boolean;
 //   name: string;
@@ -10,17 +10,17 @@
 //   src: string;
 // };
 
-// type TProductsMenu = Array<TProductMenu>;
+// export type TProductsMenu = Array<TProductMenu>;
 
-// type TProductsCategoryMenu = {
+// export type TProductsCategoryMenu = {
 //   category: string;
 //   icon: string;
 //   products: TProductsMenu;
 // };
 
-// type TAllProductsCategoryMenu = Array<TProductsCategoryMenu>;
+// export type TAllProductsCategoryMenu = Array<TProductsCategoryMenu>;
 
-// type TCardSearchProductMenu = {
+// export type TCardSearchProductMenu = {
 //   id: number;
 //   rank: number;
 //   rank_title: number;
@@ -31,4 +31,4 @@
 //   description: string;
 // }
 
-// type TCardsSearchProductMenu = Array<TCardSearchProductMenu>;
+// export type TCardsSearchProductMenu = Array<TCardSearchProductMenu>;

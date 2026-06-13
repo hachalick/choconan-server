@@ -6,6 +6,12 @@ import { Repository } from 'typeorm';
 import { EconomicPackageEntity } from 'src/modules/entity/mysql/EconomicPackage.entity';
 import { ContentEconomicPackageEntity } from 'src/modules/entity/mysql/ContentEconomicPackage.entity';
 import * as moment from 'moment-jalaali';
+import {
+  TEconomicPackage,
+  TIdProductMenu,
+  TIdProductsSearchMenu,
+  TProductMenu,
+} from 'src/modules/types/fetch.type';
 
 @Injectable()
 export class MenuService {
@@ -73,7 +79,7 @@ export class MenuService {
       relations: { categoryProductMenu: true },
     });
     const listSearch: TIdProductsSearchMenu = [];
-    for (let i in allProductMenu) {
+    for (const item of allProductMenu) {
       const {
         available,
         description,
@@ -88,7 +94,7 @@ export class MenuService {
         categoryProductMenu,
         snap,
         tapsi,
-      } = allProductMenu[i];
+      } = item;
       const weight_product = {
         meta_title: 0,
         meta_description: 0,
@@ -116,7 +122,7 @@ export class MenuService {
         weight_product.meta_description +
         weight_product.meta_title +
         weight_product.name;
-      rank &&
+      if (rank) {
         listSearch.push({
           rank,
           available,
@@ -133,6 +139,7 @@ export class MenuService {
           snap,
           tapsi,
         });
+      }
     }
     listSearch.sort((a, b) => b.rank - a.rank);
     return listSearch;
@@ -234,7 +241,7 @@ export class MenuService {
     snap,
     tapsi,
   }: TProductMenu & { product_id: string }) {
-    console.log(name, price)
+    console.log(name, price);
     await this.productMenuRepository.update(
       {
         product_id,
@@ -392,7 +399,7 @@ export class MenuService {
     economic_package_id,
     src,
   }: TEconomicPackage & { economic_package_id: string }) {
-    const findEconomicPackage = this.economicPackageRepository.findOne({
+    const findEconomicPackage = await this.economicPackageRepository.findOne({
       where: { economic_package_id },
     });
     if (findEconomicPackage) {

@@ -11,7 +11,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { FileModule } from './file/file.module';
-import { RobotModule } from './robot/robot.module';
 import { ServiceModule } from './service/service.module';
 import { PricingModule } from './pricing/pricing.module';
 import { FactorItemEntity } from './modules/entity/mysql/FactorItem.entity';
@@ -36,7 +35,6 @@ import { FactorEntity } from './modules/entity/mysql/Factor.entity';
     OrderModule,
     MenuModule,
     UserModule,
-    RobotModule,
     PricingModule,
     ServiceModule,
   ],

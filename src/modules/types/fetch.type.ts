@@ -1,4 +1,4 @@
-type TProductMenu = {
+export type TProductMenu = {
   id: number;
   price: number;
   waiting: number;
@@ -12,40 +12,43 @@ type TProductMenu = {
   tapsi: string;
 };
 
-type TProductsMenu = TProductMenu[];
+export type TProductsMenu = TProductMenu[];
 
-type TIdProductMenu = TProductMenu & { product_id: string };
+export type TIdProductMenu = TProductMenu & { product_id: string };
 
-type TIdProductsMenu = TIdProductMenu[];
+export type TIdProductsMenu = TIdProductMenu[];
 
-type TCategoryMenu = {
+export type TCategoryMenu = {
   category: string;
   icon: string;
   products: TProductsMenu;
 };
 
-type TCategoriesMenu = TCategoryMenu[];
+export type TCategoriesMenu = TCategoryMenu[];
 
-type TIdCategoryMenu = {
+export type TIdCategoryMenu = {
   category_product_id: string;
   category: string;
   icon: string;
   products: TIdProductMenu[];
 };
 
-type TIdCategoriesMenu = TIdCategoryMenu[];
+export type TIdCategoriesMenu = TIdCategoryMenu[];
 
-type TIdProductSearchMenu = TIdProductMenu & { rank: number; category: string };
+export type TIdProductSearchMenu = TIdProductMenu & {
+  rank: number;
+  category: string;
+};
 
-type TIdProductsSearchMenu = TIdProductSearchMenu[];
+export type TIdProductsSearchMenu = TIdProductSearchMenu[];
 
-type TIdFactorPresentOrder = {
+export type TIdFactorPresentOrder = {
   factor_present_order_id: string;
   count: number;
   products: TIdProductMenu;
 };
 
-type TIdPresentOrderTable = {
+export type TIdPresentOrderTable = {
   present_order_table_id: string;
   table: number;
   busy: boolean;
@@ -53,9 +56,9 @@ type TIdPresentOrderTable = {
   factorPresentOrderTable: TIdFactorPresentOrder[];
 };
 
-type TIdPresentOrdersTable = TIdPresentOrderTable[];
+export type TIdPresentOrdersTable = TIdPresentOrderTable[];
 
-type TEconomicPackage = {
+export type TEconomicPackage = {
   src: string;
   title: string;
   start_hours: string;
@@ -66,7 +69,7 @@ type TEconomicPackage = {
   is_active: boolean;
 };
 
-type TContentEconomicPackage = {
+export type TContentEconomicPackage = {
   economic_package_id: string;
   product_id: string;
 };

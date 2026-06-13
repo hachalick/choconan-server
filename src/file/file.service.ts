@@ -17,6 +17,7 @@ import {
 import * as XLSX from 'xlsx';
 import { Response } from 'express';
 import { ProductMenuEntity } from 'src/modules/entity/mysql/Product.entity';
+import { TCategoriesMenu, TProductsMenu } from 'src/modules/types/fetch.type';
 
 @Injectable()
 export class FileService {
@@ -93,17 +94,17 @@ export class FileService {
       });
     }
     const pastCategory = await this.categoryProductMenuRepository.find();
-    for (let i in pastCategory) {
+    for (const item of pastCategory) {
       await this.categoryProductMenuRepository.delete({
-        category_product_id: pastCategory[i].category_product_id,
+        category_product_id: item.category_product_id,
       });
     }
-    for (let i in allMenu) {
+    for (const item of allMenu) {
       const { category_id } = await this.menuService.addCategoryMenu({
-        category: allMenu[i].category,
-        icon: allMenu[i].icon,
+        category: item.category,
+        icon: item.icon,
       });
-      for (let j in allMenu[i].products) {
+      for (const itemProduct of item.products) {
         const {
           available,
           description,
@@ -116,7 +117,7 @@ export class FileService {
           waiting,
           snap,
           tapsi,
-        } = allMenu[i].products[j];
+        } = itemProduct;
         await this.menuService.addProductMenu({
           available,
           description,

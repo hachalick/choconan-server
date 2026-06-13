@@ -1,11 +1,11 @@
-type TDetailOrder = {
+export type TDetailOrder = {
   count: number;
   product_id: string;
 };
 
-type TDetailOrders = Array<TDetailOrder>;
+export type TDetailOrders = Array<TDetailOrder>;
 
-type TOrderTable = {
+export type TOrderTable = {
   table: number;
   busy: boolean;
   accept: boolean;

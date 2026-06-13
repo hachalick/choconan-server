@@ -21,7 +21,7 @@ import {
 } from 'src/auth/auth.guard';
 import { UploadFileDto } from 'src/menu/menu.dto';
 import { FileService } from './file.service';
-import { Response } from 'express';
+import { type Response } from 'express';
 
 @ApiTags('File')
 @Controller('file')

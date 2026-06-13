@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 // import { KavenegarApi } from 'kavenegar';
 import { ProductMenuEntity } from 'src/modules/entity/mysql/Product.entity';
 import { ESmsTemplate } from 'src/modules/enum/kavenegar.enum';
+import { TWelcomeUser } from 'src/modules/types/service.type';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -25,8 +26,8 @@ export class ServiceService {
 
   async sendSmsOtp({ phone, otp }: { phone: string; otp: string }) {
     console.log(otp);
-    const url = `http://api.kavenegar.com/v1/${this.TOKEN_SMS}/verify/lookup.json?receptor=${phone}&token=${otp}&template=${ESmsTemplate.VERIFYCHOCONAN}`;
-    await fetch(url);
+    // const url = `http://api.kavenegar.com/v1/${this.TOKEN_SMS}/verify/lookup.json?receptor=${phone}&token=${otp}&template=${ESmsTemplate.VERIFYCHOCONAN}`;
+    // await fetch(url);
   }
 
   async getCrawlerMenuSnapFood(): Promise<{
