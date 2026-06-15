@@ -16,7 +16,7 @@ import {
 } from 'typeorm';
 import { FactorEntity } from 'src/modules/entity/mysql/Factor.entity';
 import { FactorItemEntity } from 'src/modules/entity/mysql/FactorItem.entity';
-import * as moment from 'moment-jalaali';
+import moment from 'moment-jalaali';
 import { JwtService } from 'src/modules/jwt/jwt.service';
 import { UserEntity } from 'src/modules/entity/mysql/User.entity';
 import { TDetailOrders } from 'src/modules/types/order';
@@ -299,11 +299,6 @@ export class OrderService {
 
     let cursor = moment().startOf('jMonth');
 
-    console.log(cursor.format('jYYYY'));
-    console.log(cursor.format('jM'));
-    // console.log(cursor.subtract(1, 'jMonth').format('jM'))
-    // console.log(cursor.subtract(1, 'jMonth').format('jYYYY'))
-
     for (let i = 0; i < countMonth; i++) {
       const year = Number(cursor.format('jYYYY'));
       const month = Number(cursor.format('jM'));
@@ -399,16 +394,25 @@ export class OrderService {
       `${nowYear}/${nowMonth}/${nowDay} 00:00:00`,
     ).getTime();
 
-    let counterFactor = await this.factorRepository.count({
+    const factors = await this.factorRepository.find({
       where: {
         create_at: Between(
           new Date(startToday - 1000 * 60 * 60 * 24),
           new Date(startToday),
         ),
       },
+      select: { factor_number: true },
+      order: { factor_number: 'ASC' },
     });
 
-    counterFactor++;
+    let counterFactor = 1;
+
+    for (const item of factors) {
+      if (item.factor_number != counterFactor) {
+        break;
+      }
+      counterFactor++;
+    }
 
     const newFactor = this.factorRepository.create({
       factor_number: counterFactor,
@@ -446,6 +450,7 @@ export class OrderService {
     location,
     pay_status,
     tax,
+    create_date,
   }: {
     factor_id: string;
     customer_mobile: string;
@@ -453,11 +458,63 @@ export class OrderService {
     tax: number;
     location: string;
     pay_status: boolean;
+    create_date: string;
   }): Promise<{ update: boolean }> {
     try {
+      const dateFactor = new Date(
+        moment(create_date, 'jYYYY/jMM/jDD hh:mm:ss').format(
+          'YYYY-MM-DD hh:mm:ss',
+        ),
+      );
+
+      const findFactor = await this.factorRepository.findOne({
+        where: {
+          factor_id,
+        },
+      });
+
+      if (findFactor.create_at != dateFactor) {
+        const nowYear = dateFactor.getFullYear();
+        const nowMonth = dateFactor.getMonth() + 1;
+        const nowDay = dateFactor.getDate() + 1;
+
+        const startToday = new Date(
+          `${nowYear}/${nowMonth}/${nowDay} 00:00:00`,
+        ).getTime();
+
+        const factors = await this.factorRepository.find({
+          where: {
+            create_at: Between(
+              new Date(startToday - 1000 * 60 * 60 * 24),
+              new Date(startToday),
+            ),
+          },
+          select: { factor_number: true },
+          order: { factor_number: 'ASC' },
+        });
+
+        let counterFactor = 1;
+
+        for (const item of factors) {
+          if (item.factor_number != counterFactor) {
+            break;
+          }
+          counterFactor++;
+        }
+
+        findFactor.factor_number = counterFactor;
+      }
+
       await this.factorRepository.update(
         { factor_id },
-        { customer_mobile, location, pay_status, tax },
+        {
+          customer_mobile,
+          location,
+          pay_status,
+          tax,
+          factor_number: findFactor.factor_number,
+          create_at: dateFactor,
+        },
       );
       return { update: true };
     } catch (error) {

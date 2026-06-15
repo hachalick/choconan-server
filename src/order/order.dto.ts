@@ -35,6 +35,10 @@ export class UpdateOrderDto {
   @ApiProperty({ type: String, default: '' })
   location: string;
 
+  @IsString()
+  @ApiProperty({ type: String, default: '' })
+  create_date: string;
+
   @IsBoolean()
   @ApiProperty({ type: Boolean, default: false })
   pay_status: boolean;

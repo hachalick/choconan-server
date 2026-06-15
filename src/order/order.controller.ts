@@ -179,7 +179,15 @@ export class OrderController {
     @Headers('access_token') access_token: string,
     @Body() body: UpdateOrderDto,
   ) {
-    const { customer_mobile, factor_number, location, pay_status, tax } = body;
+    const {
+      customer_mobile,
+      factor_number,
+      location,
+      pay_status,
+      tax,
+      create_date,
+    } = body;
+
     return this.orderService.updateOrder({
       factor_id: order_id,
       customer_mobile,
@@ -187,6 +195,7 @@ export class OrderController {
       location,
       pay_status,
       tax,
+      create_date,
     });
   }
 
