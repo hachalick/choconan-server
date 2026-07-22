@@ -1,12 +1,16 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
-import { configSwagger } from './modules/config/swaagger';
 import { SwaggerModule } from '@nestjs/swagger';
-import { callBackListener } from './modules/utils/callBack.main';
 import { ValidationPipe } from '@nestjs/common';
+import { AppModule } from './Api/Modules/App.Module';
+import { ConfigurationSwagger } from './Share/Configuration/swaagger';
+import { CallBackListener } from './Share/Utils/callBack.main';
+import {
+  ApplicationConfigurationKeys,
+  ApplicationConfigurationValues,
+} from './Share/Configuration/Parameter/Application.Configuration';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -15,10 +19,13 @@ async function bootstrap() {
   app.enableCors({ origin: '*' });
   app.useStaticAssets(join(process.cwd(), 'public'));
   const configService = app.get(ConfigService);
-  const port = configService.get('App.PORT_SERVER');
-  const document = SwaggerModule.createDocument(app, configSwagger);
+  const port = configService.get<number>(
+    `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.PORT_SERVER}`,
+  );
+  const document = SwaggerModule.createDocument(app, ConfigurationSwagger);
   SwaggerModule.setup('api/swagger', app, document);
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(port, () => callBackListener(port));
+  await app.listen(port, () => CallBackListener(port));
 }
+
 bootstrap();
