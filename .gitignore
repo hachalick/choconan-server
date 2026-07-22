@@ -4,7 +4,7 @@
 /build
 /documentation
 /test
-/src/modules/config/config.ts
+/src/Share/Configuration/Parameter
 /public
 
 # Logs

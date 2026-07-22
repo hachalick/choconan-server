@@ -1,0 +1,42 @@
+import { Column, Entity, Generated, OneToMany, PrimaryColumn } from 'typeorm';
+import { ProductMenuEntity } from './Product.entity';
+
+@Entity()
+export class CategoryProductMenuEntity {
+  @PrimaryColumn({ type: 'uuid' })
+  @Generated('uuid')
+  category_product_id: string;
+
+  @Column({
+    type: 'varchar',
+    length: 100,
+    nullable: false,
+    default: '',
+    unique: false,
+    charset: 'utf8',
+  })
+  category: string;
+
+  @Column({
+    type: 'varchar',
+    length: 500,
+    nullable: false,
+    default: '',
+    unique: false,
+    charset: 'utf8',
+  })
+  icon: string;
+
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    unique: false,
+  })
+  IsShowMenu: boolean;
+
+  @OneToMany(
+    () => ProductMenuEntity,
+    (products) => products.categoryProductMenu,
+  )
+  products: ProductMenuEntity[];
+}
