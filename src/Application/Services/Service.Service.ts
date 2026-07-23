@@ -6,7 +6,7 @@ import { ConnectionNameMysql } from 'src/Domain/Entities/Mysql/Seed/ConnectionNa
 import { Repository } from 'typeorm';
 import { type IServiceService } from './Interfaces/Service.Service.Interface';
 import { SendSmsOtpModel } from '../../Domain/Models/Service.Service.Model';
-import { ESmsTemplate } from 'src/Share/Enum/kavenegar.enum';
+import { ESmsTemplate } from 'src/Share/Enum/Kavenegar.Enum';
 import {
   ReadMatchProductSnapFoodViewModel,
   ReadMatchProductTapsiFoodViewModel,

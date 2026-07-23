@@ -95,8 +95,6 @@ export class UserService implements IUserService {
       where: { Phone: Not('9353790881'), NationalCode: '98' },
     });
 
-    console.log(res);
-
     return res.map((user) => ({
       Id: user.Guid,
       Name: user.Name,

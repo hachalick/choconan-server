@@ -581,8 +581,6 @@ export class PricingService implements IPricingService {
       });
     });
 
-    console.log(1);
-
     return {
       DayToWork: diffDays,
       Cost: {

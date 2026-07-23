@@ -6,11 +6,11 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './Api/Modules/App.Module';
 import { ConfigurationSwagger } from './Share/Configuration/swaagger';
-import { CallBackListener } from './Share/Utils/callBack.main';
 import {
   ApplicationConfigurationKeys,
   ApplicationConfigurationValues,
 } from './Share/Configuration/Parameter/Application.Configuration';
+import { CallBackListener } from './Share/Utils/CallBack.main';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
