@@ -44,7 +44,7 @@ export class ServiceService implements IServiceService {
 
     if (!this.LOCAL_RUN) {
       await fetch(
-        `http://api.kavenegar.com/v1/${this.TOKEN_SMS}/verify/lookup.json?receptor=${Param.Phone}&token=${Param.Phone}&template=${ESmsTemplate.VERIFYCHOCONAN}`,
+        `http://api.kavenegar.com/v1/${this.TOKEN_SMS}/verify/lookup.json?receptor=${Param.Phone}&token=${Param.Otp}&template=${ESmsTemplate.VERIFYCHOCONAN}`,
       );
     }
   }
