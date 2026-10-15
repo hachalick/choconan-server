@@ -4,35 +4,31 @@ import { writeFileSync, unlinkSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { Raw, Repository } from 'typeorm';
 import * as XLSX from 'xlsx';
-import { IFileService } from './Interfaces/File.Service.Interface';
-import { CategoryProductMenuEntity } from 'src/Domain/Entities/Mysql/CategoryProductMenu.Entity';
-import { ProductMenuEntity } from 'src/Domain/Entities/Mysql/ProductMenu.Entity';
-import { FileEntity } from 'src/Domain/Entities/Mysql/File.Entity';
-import { ConnectionNameMysql } from 'src/Domain/Entities/Mysql/Seed/ConnectionNameMysql';
 import {
   DeleteFileImageModel,
   DownloadFileMenuExcelModel,
   ReadFileImageListModel,
   UploadFileImageModel,
-} from '../../Domain/Models/File.Service.Model';
+} from '../../Domain/Models/File.Service.Model.js';
 import {
   DeleteFileImageViewModel,
   DownloadFileMenuExcelViewModel,
   ReadFileImageListViewModel,
   UploadFileImageViewModel,
-} from '../../Domain/ViewModels/File.Service.ViewModel';
-import { HttpExceptionCustom } from 'src/Api/Exceptions/HttpExceptionCustom';
-import { HttpExceptionMessageCustom } from 'src/Share/Constants/HttpExceptionMessageCustom';
-import { InnerRoute } from 'src/Share/Constants/InnerRoute.Constants';
+} from '../../Domain/ViewModels/File.Service.ViewModel.js';
+import { IFileService } from './Interfaces/File.Service.Interface.js';
+import { CategoryProductMenuEntity } from '../../Domain/Entities/Mysql/CategoryProductMenu.Entity.js';
+import { ConnectionNameMysql } from '../../Domain/Entities/Mysql/Seed/ConnectionNameMysql.js';
+import { FileEntity } from '../../Domain/Entities/Mysql/File.Entity.js';
+import { InnerRoute } from '../../Domain/Constants/InnerRoute.Constants.js';
+import { HttpExceptionMessageCustom } from '../../Domain/Constants/HttpExceptionMessageCustom.js';
+import { HttpExceptionCustom } from '../../Api/Exceptions/HttpExceptionCustom.js';
 
 @Injectable()
 export class FileService implements IFileService {
   constructor(
     @InjectRepository(CategoryProductMenuEntity, ConnectionNameMysql.global)
     private readonly CategoryProductMenuRepository: Repository<CategoryProductMenuEntity>,
-
-    @InjectRepository(ProductMenuEntity, ConnectionNameMysql.global)
-    private readonly ProductMenuRepository: Repository<ProductMenuEntity>,
 
     @InjectRepository(FileEntity, ConnectionNameMysql.global)
     private readonly FileRepository: Repository<FileEntity>,

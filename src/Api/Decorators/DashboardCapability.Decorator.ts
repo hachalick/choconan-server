@@ -1,5 +1,5 @@
 import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common';
-import { EDashboardCapability } from 'src/Share/Enum/DashboardCapability.Enum';
+import { EDashboardCapability } from '../../Domain/Enum/DashboardCapability.Enum.js';
 
 export const DASHBOARD_CAPABILITY_KEY = 'dashboard_capability';
 

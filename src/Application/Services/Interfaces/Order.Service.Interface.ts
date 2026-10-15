@@ -21,7 +21,7 @@ import {
   UpdateOrderModel,
   UpdatePayStatusOrderModel,
   UpdateTableModel,
-} from '../../../Domain/Models/Order.Service.Model';
+} from '../../../Domain/Models/Order.Service.Model.js';
 import {
   AcceptStatusTableViewModel,
   CreateOrderItemViewModel,
@@ -45,7 +45,7 @@ import {
   UpdateOrderViewModel,
   UpdatePayStatusOrderViewModel,
   UpdateTableViewModel,
-} from '../../../Domain/ViewModels/Order.Service.ViewModel';
+} from '../../../Domain/ViewModels/Order.Service.ViewModel.js';
 
 export interface IOrderService {
   //#region Table

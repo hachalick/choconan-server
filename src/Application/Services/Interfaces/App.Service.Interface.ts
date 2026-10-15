@@ -3,13 +3,13 @@ import {
   ReadVideoCategoryDetailModel,
   ReadVideoCategoryListModel,
   UpdateProgramModel,
-} from 'src/Domain/Models/App.Service.Model';
+} from '../../../Domain/Models/App.Service.Model.js';
 import {
   ReadLastVideoCategoryDetailViewModel,
   ReadVideoCategoryDetailViewModel,
   ReadVideoCategoryListViewModel,
   UpdateProgramViewModel,
-} from 'src/Domain/ViewModels/App.Service.ViewModel';
+} from '../../../Domain/ViewModels/App.Service.ViewModel.js';
 
 export interface IAppService {
   ReadVideoCategoryList(

@@ -1,10 +1,12 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
-import { BaseEntity } from './Seed/Base.Entity';
-import { TransactionTypeEntity } from './TransactionType.Entity';
-import { FactorEntity } from './Factor.Entity';
+import { Column, Entity, ManyToOne, type Relation } from 'typeorm';
+import { BaseEntity } from './Seed/Base.Entity.js';
+import { TransactionTypeEntity } from './TransactionType.Entity.js';
+import { FactorEntity } from './Factor.Entity.js';
 
 @Entity('transaction_factor')
 export class TransactionFactorEntity extends BaseEntity {
+  //#region properties
+
   @Column({
     type: 'decimal',
     precision: 25,
@@ -13,17 +15,23 @@ export class TransactionFactorEntity extends BaseEntity {
   })
   TransactionAmount: number;
 
+  //#endregion
+
+  //#region relations
+
   @ManyToOne(
     () => TransactionTypeEntity,
     (transactionTypeEntity) => transactionTypeEntity.TransactionFactors,
     { onDelete: 'SET NULL' },
   )
-  TransactionType: TransactionTypeEntity;
+  TransactionType: Relation<TransactionTypeEntity>;
 
   @ManyToOne(
     () => FactorEntity,
     (factorEntity) => factorEntity.TransactionFactors,
     { onDelete: 'CASCADE' },
   )
-  Factor: FactorEntity;
+  Factor: Relation<FactorEntity>;
+
+  //#endregion
 }

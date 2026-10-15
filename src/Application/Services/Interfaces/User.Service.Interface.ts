@@ -18,7 +18,7 @@ import {
   UpdateRoleModel,
   UpdateUserModel,
   UpdateUserProfileModel,
-} from '../../../Domain/Models/User.Service.Model';
+} from '../../../Domain/Models/User.Service.Model.js';
 import {
   CreateDashboardCapabilityUserViewModel,
   CreateDashboardCapabilityViewModel,
@@ -39,7 +39,7 @@ import {
   UpdateRoleViewModel,
   UpdateUserProfileViewModel,
   UpdateUserViewModel,
-} from '../../../Domain/ViewModels/User.Service.ViewModel';
+} from '../../../Domain/ViewModels/User.Service.ViewModel.js';
 
 export interface IUserService {
   //#region User

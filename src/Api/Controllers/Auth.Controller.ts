@@ -7,20 +7,21 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiHeader, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiTags, ApiResponse, ApiBody } from '@nestjs/swagger';
 import {
   LoginOtpDto,
   LoginPasswordDto,
   RefreshTokenDto,
   ResetPasswordDto,
-} from '../DTOs/Auth.Controller.DTO';
+} from '../../Domain/DTOs/Auth.Controller.DTO.js';
 import {
   CheckExistAccessTokenInHeaderGuard,
   CheckNotExpiresTokenGuard,
-} from '../Guards/Auth.Guard';
-import { DashboardCapabilityGuard } from '../Decorators/DashboardCapability.Decorator';
-import { EDashboardCapability } from 'src/Share/Enum/DashboardCapability.Enum';
-import { AuthService } from 'src/Application/Services/Auth.Service';
+} from '../Guards/Auth.Guard.js';
+import { DashboardCapabilityGuard } from '../Decorators/DashboardCapability.Decorator.js';
+import { AuthService } from '../../Application/Services/Auth.Service.js';
+import { EDashboardCapability } from '../../Domain/Enum/DashboardCapability.Enum.js';
+import { LoginUserOtpViewModel } from '../../Domain/ViewModels/Auth.Service.ViewModel.js';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -42,6 +43,9 @@ export class AuthController {
   }
 
   @Post('login/otp')
+  @ApiResponse({
+    type: LoginUserOtpViewModel,
+  })
   LoginUserOtp(@Body() body: LoginOtpDto) {
     return this.AuthService.LoginUserOtp({
       NationalCode: body.NationalCode,

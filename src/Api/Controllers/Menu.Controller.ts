@@ -22,14 +22,12 @@ import {
   UpdateProductMenuDto,
   CreateContentEconomicPackage,
   DeleteContentEconomicPackage,
-} from '../DTOs/Menu.Controller.DTO';
-import { DashboardCapabilityGuard } from '../Decorators/DashboardCapability.Decorator';
-import { EDashboardCapability } from 'src/Share/Enum/DashboardCapability.Enum';
-import {
-  CheckExistAccessTokenInHeaderGuard,
-  CheckNotExpiresTokenGuard,
-} from '../Guards/Auth.Guard';
-import { MenuService } from 'src/Application/Services/Menu.Service';
+} from '../../Domain/DTOs/Menu.Controller.DTO.js';
+import { DashboardCapabilityGuard } from '../Decorators/DashboardCapability.Decorator.js';
+import { MenuService } from '../../Application/Services/Menu.Service.js';
+import { EDashboardCapability } from '../../Domain/Enum/DashboardCapability.Enum.js';
+import { CheckExistAccessTokenInHeaderGuard, CheckNotExpiresTokenGuard } from '../Guards/Auth.Guard.js';
+
 
 @ApiTags('Menu')
 @Controller('menu')
@@ -139,7 +137,6 @@ export class MenuController {
   @UseGuards(CheckExistAccessTokenInHeaderGuard)
   CreateMenuProduct(
     @Headers('access_token') AccessToken: string,
-    @Param('id', ParseUUIDPipe) id: string,
     @Body() body: CreateProductMenuDto,
   ) {
     return this.MenuService.CreateMenuProduct({

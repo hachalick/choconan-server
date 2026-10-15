@@ -1,8 +1,10 @@
 import { Column, Entity } from 'typeorm';
-import { BaseEntity } from './Seed/Base.Entity';
+import { BaseEntity } from './Seed/Base.Entity.js';
 
 @Entity('otp')
 export class OtpEntity extends BaseEntity {
+  //#region properties
+
   @Column({
     type: 'varchar',
     nullable: false,
@@ -49,4 +51,6 @@ export class OtpEntity extends BaseEntity {
     },
   })
   ExpireDate: Date;
+
+  //#endregion
 }

@@ -1,10 +1,12 @@
-import { Column, Entity, OneToMany } from 'typeorm';
-import { BaseEntity } from './Seed/Base.Entity';
-import { FactorItemEntity } from './FactorItem.Entity';
-import { TransactionFactorEntity } from './TransactionFactor.Entity';
+import { Column, Entity, OneToMany, type Relation } from 'typeorm';
+import { BaseEntity } from './Seed/Base.Entity.js';
+import { FactorItemEntity } from './FactorItem.Entity.js';
+import { TransactionFactorEntity } from './TransactionFactor.Entity.js';
 
 @Entity('factor')
 export class FactorEntity extends BaseEntity {
+  //#region properties
+
   @Column({ type: 'int', nullable: true })
   FactorNumber: number;
 
@@ -56,12 +58,18 @@ export class FactorEntity extends BaseEntity {
   })
   FactorDate: Date;
 
+  //#endregion
+
+  //#region relations
+
   @OneToMany(
     () => TransactionFactorEntity,
     (transaction_factors) => transaction_factors.Factor,
   )
-  TransactionFactors: TransactionFactorEntity[];
+  TransactionFactors: Relation<TransactionFactorEntity[]>;
 
   @OneToMany(() => FactorItemEntity, (factor_items) => factor_items.Factor)
-  FactorItems: FactorItemEntity[];
+  FactorItems: Relation<FactorItemEntity[]>;
+
+  //#endregion
 }

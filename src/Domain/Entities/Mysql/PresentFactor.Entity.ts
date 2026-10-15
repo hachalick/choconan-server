@@ -1,9 +1,11 @@
-import { Column, Entity, OneToMany } from 'typeorm';
-import { BaseEntity } from './Seed/Base.Entity';
-import { PresentFactorItemEntity } from './FactorPresentOrder.Entity';
+import { Column, Entity, OneToMany, type Relation } from 'typeorm';
+import { BaseEntity } from './Seed/Base.Entity.js';
+import { PresentFactorItemEntity } from './FactorPresentOrder.Entity.js';
 
 @Entity('present_factor')
 export class PresentFactorEntity extends BaseEntity {
+  //#region properties
+
   @Column({
     type: 'varchar',
     nullable: false,
@@ -21,9 +23,15 @@ export class PresentFactorEntity extends BaseEntity {
   })
   IsBusy: boolean;
 
+  //#endregion
+
+  //#region relations
+
   @OneToMany(
     () => PresentFactorItemEntity,
     (factorPresentOrderTable) => factorPresentOrderTable.PresentOrderTable,
   )
-  FactorPresentOrderTables: PresentFactorItemEntity[];
+  FactorPresentOrderTables: Relation<PresentFactorItemEntity[]>;
+
+  //#endregion
 }

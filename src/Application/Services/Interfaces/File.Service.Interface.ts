@@ -3,13 +3,13 @@ import {
   DownloadFileMenuExcelModel,
   ReadFileImageListModel,
   UploadFileImageModel,
-} from '../../../Domain/Models/File.Service.Model';
+} from '../../../Domain/Models/File.Service.Model.js';
 import {
   DeleteFileImageViewModel,
   DownloadFileMenuExcelViewModel,
   ReadFileImageListViewModel,
   UploadFileImageViewModel,
-} from '../../../Domain/ViewModels/File.Service.ViewModel';
+} from '../../../Domain/ViewModels/File.Service.ViewModel.js';
 
 export interface IFileService {
   DownloadFileMenuExcel(

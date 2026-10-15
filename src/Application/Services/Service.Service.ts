@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProductMenuEntity } from 'src/Domain/Entities/Mysql/ProductMenu.Entity';
-import { ConnectionNameMysql } from 'src/Domain/Entities/Mysql/Seed/ConnectionNameMysql';
 import { Repository } from 'typeorm';
-import { type IServiceService } from './Interfaces/Service.Service.Interface';
-import { SendSmsOtpModel } from '../../Domain/Models/Service.Service.Model';
-import { ESmsTemplate } from 'src/Share/Enum/Kavenegar.Enum';
+import { IServiceService } from './Interfaces/Service.Service.Interface.js';
+import { ProductMenuEntity } from '../../Domain/Entities/Mysql/ProductMenu.Entity.js';
+import { ConnectionNameMysql } from '../../Domain/Entities/Mysql/Seed/ConnectionNameMysql.js';
+import {
+  ApplicationConfigurationKeys,
+  ApplicationConfigurationValues,
+} from '../../Persistence/Configuration/Parameter/Application.Configuration.js';
+import { SendSmsOtpModel } from '../../Domain/Models/Service.Service.Model.js';
 import {
   ReadMatchProductSnapFoodViewModel,
   ReadMatchProductTapsiFoodViewModel,
@@ -14,11 +17,8 @@ import {
   ReadMenuTapsiFoodViewModel,
   ReadNotMatchProductSnapFoodViewModel,
   ReadNotMatchProductTapsiFoodViewModel,
-} from '../../Domain/ViewModels/Service.Service.ViewModel';
-import {
-  ApplicationConfigurationKeys,
-  ApplicationConfigurationValues,
-} from 'src/Share/Configuration/Parameter/Application.Configuration';
+} from '../../Domain/ViewModels/Service.Service.ViewModel.js';
+import { ESmsTemplate } from '../../Domain/Enum/Kavenegar.Enum.js';
 
 @Injectable()
 export class ServiceService implements IServiceService {
@@ -31,12 +31,14 @@ export class ServiceService implements IServiceService {
     @InjectRepository(ProductMenuEntity, ConnectionNameMysql.global)
     private readonly productMenuEntityRepository: Repository<ProductMenuEntity>,
   ) {
-    this.TOKEN_SMS = this.configService.get<string>(
-      `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.TOKEN_SMS}`,
-    );
-    this.LOCAL_RUN = this.configService.get<boolean>(
-      `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.LOCAL_RUN}`,
-    );
+    this.TOKEN_SMS =
+      this.configService.get<string>(
+        `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.TOKEN_SMS}`,
+      ) || '';
+    this.LOCAL_RUN =
+      this.configService.get<boolean>(
+        `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.LOCAL_RUN}`,
+      ) || true;
   }
 
   async SendSmsOtp(Param: SendSmsOtpModel): Promise<void> {
@@ -65,10 +67,12 @@ export class ServiceService implements IServiceService {
           Title: product.title,
           Price: product.price,
         }))
-        .sort((a, b) => a.Title.localeCompare(b.Title));
+        .sort((a: any, b: any) => a.Title.localeCompare(b.Title));
 
       const uniqueProducts = Array.from(
-        new Map(products.map((product) => [product.Title, product])).values(),
+        new Map(
+          products.map((product: any) => [product.Title, product]),
+        ).values(),
       ) as { Id: string; Title: string; Price: number }[];
 
       const listFoundDb: ReadMatchProductSnapFoodViewModel[] = [];
@@ -105,6 +109,12 @@ export class ServiceService implements IServiceService {
         NotMatch: listNotFoundDb,
       };
     }
+
+    return {
+      AllProduct: [],
+      Match: [],
+      NotMatch: [],
+    };
   }
 
   async ReadMenuTapsiFood(): Promise<ReadMenuTapsiFoodViewModel> {
@@ -124,10 +134,12 @@ export class ServiceService implements IServiceService {
           Title: product.productVariationName,
           Price: product.price,
         }))
-        .sort((a, b) => a.Title.localeCompare(b.Title));
+        .sort((a: any, b: any) => a.Title.localeCompare(b.Title));
 
       const uniqueProducts = Array.from(
-        new Map(products.map((product) => [product.Title, product])).values(),
+        new Map(
+          products.map((product: any) => [product.Title, product]),
+        ).values(),
       ) as { Id: string; Title: string; Price: number }[];
 
       const listFoundDb: ReadMatchProductTapsiFoodViewModel[] = [];
@@ -164,5 +176,11 @@ export class ServiceService implements IServiceService {
         NotMatch: listNotFoundDb,
       };
     }
+
+    return {
+      AllProduct: [],
+      Match: [],
+      NotMatch: [],
+    };
   }
 }

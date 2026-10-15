@@ -8,12 +8,7 @@ import {
   Repository,
 } from 'typeorm';
 import moment from 'moment-jalaali';
-import { IMenuService } from './Interfaces/Menu.Service.Interface';
-import { CategoryProductMenuEntity } from 'src/Domain/Entities/Mysql/CategoryProductMenu.Entity';
-import { ConnectionNameMysql } from 'src/Domain/Entities/Mysql/Seed/ConnectionNameMysql';
-import { ProductMenuEntity } from 'src/Domain/Entities/Mysql/ProductMenu.Entity';
-import { EconomicPackageEntity } from 'src/Domain/Entities/Mysql/EconomicPackage.Entity';
-import { ContentEconomicPackageEntity } from 'src/Domain/Entities/Mysql/ContentEconomicPackage.Entity';
+import { IMenuService } from './Interfaces/Menu.Service.Interface.js';
 import {
   CreateContentEconomicPackageModel,
   CreateEconomicPackageModel,
@@ -32,7 +27,7 @@ import {
   UpdateEconomicPackageModel,
   UpdateMenuCategoryModel,
   UpdateMenuProductModel,
-} from '../../Domain/Models/Menu.Service.Model';
+} from '../../Domain/Models/Menu.Service.Model.js';
 import {
   CreateContentEconomicPackageViewModel,
   CreateEconomicPackageViewModel,
@@ -51,10 +46,15 @@ import {
   UpdateEconomicPackageViewModel,
   UpdateMenuCategoryViewModel,
   UpdateMenuProductViewModel,
-} from '../../Domain/ViewModels/Menu.Service.ViewModel';
-import { HttpExceptionCustom } from 'src/Api/Exceptions/HttpExceptionCustom';
-import { HttpExceptionMessageCustom } from 'src/Share/Constants/HttpExceptionMessageCustom';
-import { FactorItemEntity } from 'src/Domain/Entities/Mysql/FactorItem.Entity';
+} from '../../Domain/ViewModels/Menu.Service.ViewModel.js';
+import { ConnectionNameMysql } from '../../Domain/Entities/Mysql/Seed/ConnectionNameMysql.js';
+import { CategoryProductMenuEntity } from '../../Domain/Entities/Mysql/CategoryProductMenu.Entity.js';
+import { ProductMenuEntity } from '../../Domain/Entities/Mysql/ProductMenu.Entity.js';
+import { FactorItemEntity } from '../../Domain/Entities/Mysql/FactorItem.Entity.js';
+import { EconomicPackageEntity } from '../../Domain/Entities/Mysql/EconomicPackage.Entity.js';
+import { ContentEconomicPackageEntity } from '../../Domain/Entities/Mysql/ContentEconomicPackage.Entity.js';
+import { HttpExceptionCustom } from '../../Api/Exceptions/HttpExceptionCustom.js';
+import { HttpExceptionMessageCustom } from '../../Domain/Constants/HttpExceptionMessageCustom.js';
 
 @Injectable()
 export class MenuService implements IMenuService {
@@ -255,7 +255,7 @@ export class MenuService implements IMenuService {
       },
     );
 
-    return { Update: res.affected > 0 };
+    return { Update: (res.affected||0) > 0 };
   }
 
   async DeleteMenuCategory(
@@ -276,7 +276,7 @@ export class MenuService implements IMenuService {
       Guid: Param.Id,
     });
 
-    return { Delete: res.affected > 0 };
+    return { Delete: (res.affected||0) > 0 };
   }
 
   //#endregion
@@ -390,7 +390,7 @@ export class MenuService implements IMenuService {
       },
     );
 
-    return { Update: res.affected > 0 };
+    return { Update: (res.affected||0) > 0 };
   }
 
   async DeleteMenuProduct(
@@ -546,7 +546,7 @@ export class MenuService implements IMenuService {
       },
     );
 
-    return { Update: res.affected > 0 };
+    return { Update: (res.affected||0) > 0 };
   }
 
   async DeleteEconomicPackage(
@@ -567,7 +567,7 @@ export class MenuService implements IMenuService {
       Guid: Param.Id,
     });
 
-    return { Delete: res.affected > 0 };
+    return { Delete: (res.affected||0) > 0 };
   }
 
   //#endregion

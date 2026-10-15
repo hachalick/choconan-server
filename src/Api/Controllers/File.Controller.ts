@@ -21,15 +21,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { type Response } from 'express';
-import {
-  CheckExistAccessTokenInHeaderGuard,
-  CheckNotExpiresTokenGuard,
-} from 'src/Api/Guards/Auth.Guard';
 import { Multer } from 'multer';
-import { UploadFileDto } from '../DTOs/File.Controller.DTO';
-import { DashboardCapabilityGuard } from '../Decorators/DashboardCapability.Decorator';
-import { EDashboardCapability } from 'src/Share/Enum/DashboardCapability.Enum';
-import { FileService } from 'src/Application/Services/File.Service';
+import { UploadFileDto } from '../../Domain/DTOs/File.Controller.DTO.js';
+import { FileService } from '../../Application/Services/File.Service.js';
+import { EDashboardCapability } from '../../Domain/Enum/DashboardCapability.Enum.js';
+import { DashboardCapabilityGuard } from '../Decorators/DashboardCapability.Decorator.js';
+import { CheckExistAccessTokenInHeaderGuard, CheckNotExpiresTokenGuard } from '../Guards/Auth.Guard.js';
 
 @ApiTags('File')
 @Controller('file')

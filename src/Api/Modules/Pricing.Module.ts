@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CostPricingEntity } from 'src/Domain/Entities/Mysql/CostPricing.Entity';
-import { FactorEntity } from 'src/Domain/Entities/Mysql/Factor.Entity';
-import { FactorItemEntity } from 'src/Domain/Entities/Mysql/FactorItem.Entity';
-import { ProductMenuEntity } from 'src/Domain/Entities/Mysql/ProductMenu.Entity';
-import { ProductPricingEntity } from 'src/Domain/Entities/Mysql/ProductPricing.Entity';
-import { ProductUnitPricingEntity } from 'src/Domain/Entities/Mysql/ProductUnitPricing.Entity';
-import { ProductUnitDetailEntity } from 'src/Domain/Entities/Mysql/ProductUnitDetail.Entity';
-import { ProductUnitRatioPricingEntity } from 'src/Domain/Entities/Mysql/ProductUnitRatioPricing.Entity';
-import { ConnectionNameMysql } from 'src/Domain/Entities/Mysql/Seed/ConnectionNameMysql';
-import { UnitPricingEntity } from 'src/Domain/Entities/Mysql/UnitPricing.Entity';
-import { UserEntity } from 'src/Domain/Entities/Mysql/User.Entity';
-import { JwtModule } from './Jwt.Module';
-import { PricingController } from '../Controllers/Pricing.Controller';
-import { PricingService } from 'src/Application/Services/Pricing.Service';
+import { PricingService } from '../../Application/Services/Pricing.Service.js';
+import { PricingController } from '../Controllers/Pricing.Controller.js';
+import { JwtModule } from './Jwt.Module.js';
+import { ConnectionNameMysql } from '../../Domain/Entities/Mysql/Seed/ConnectionNameMysql.js';
+import { UserEntity } from '../../Domain/Entities/Mysql/User.Entity.js';
+import { FactorEntity } from '../../Domain/Entities/Mysql/Factor.Entity.js';
+import { CostPricingEntity } from '../../Domain/Entities/Mysql/CostPricing.Entity.js';
+import { FactorItemEntity } from '../../Domain/Entities/Mysql/FactorItem.Entity.js';
+import { ProductMenuEntity } from '../../Domain/Entities/Mysql/ProductMenu.Entity.js';
+import { ProductUnitDetailEntity } from '../../Domain/Entities/Mysql/ProductUnitDetail.Entity.js';
+import { UnitPricingEntity } from '../../Domain/Entities/Mysql/UnitPricing.Entity.js';
+import { ProductUnitRatioPricingEntity } from '../../Domain/Entities/Mysql/ProductUnitRatioPricing.Entity.js';
+import { ProductUnitPricingEntity } from '../../Domain/Entities/Mysql/ProductUnitPricing.Entity.js';
+import { ProductPricingEntity } from '../../Domain/Entities/Mysql/ProductPricing.Entity.js';
 
 @Module({
   imports: [

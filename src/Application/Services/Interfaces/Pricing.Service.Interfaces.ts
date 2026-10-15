@@ -20,7 +20,7 @@ import {
   UpdateProductUnitPricingModel,
   UpdateProductUnitRatioModel,
   UpdateUnitPricingModel,
-} from '../../../Domain/Models/Pricing.Service.Model';
+} from '../../../Domain/Models/Pricing.Service.Model.js';
 import {
   CreateCostProductPricingViewModel,
   CreateDetailProductPricingViewModel,
@@ -43,7 +43,7 @@ import {
   UpdateProductUnitPricingViewModel,
   UpdateProductUnitRatioViewModel,
   UpdateUnitPricingViewModel,
-} from '../../../Domain/ViewModels/Pricing.Service.ViewModel';
+} from '../../../Domain/ViewModels/Pricing.Service.ViewModel.js';
 
 export interface IPricingService {
   //#region Read Unit

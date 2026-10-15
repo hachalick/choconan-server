@@ -3,7 +3,7 @@ import {
   BaseDeleteViewModel,
   BaseReadViewModel,
   BaseUpdateViewModel,
-} from './Seed/Base.Service.ViewModel';
+} from './Seed/Base.Service.ViewModel.js';
 
 export class ReadMenuDetailViewModel extends BaseReadViewModel {
   Name: string;

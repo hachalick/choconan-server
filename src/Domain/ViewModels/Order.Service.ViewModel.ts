@@ -4,7 +4,7 @@ import {
   BaseEmitViewModel,
   BaseReadViewModel,
   BaseUpdateViewModel,
-} from './Seed/Base.Service.ViewModel';
+} from './Seed/Base.Service.ViewModel.js';
 
 export class ReadTableListViewModel extends BaseReadViewModel {
   Location: string;

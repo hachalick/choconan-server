@@ -1,7 +1,7 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
-import { ProductMenuEntity } from './ProductMenu.Entity';
-import { BaseEntity } from './Seed/Base.Entity';
-import { PresentFactorEntity } from './PresentFactor.Entity';
+import { Column, Entity, ManyToOne, type Relation } from 'typeorm';
+import { ProductMenuEntity } from './ProductMenu.Entity.js';
+import { BaseEntity } from './Seed/Base.Entity.js';
+import { PresentFactorEntity } from './PresentFactor.Entity.js';
 
 @Entity('present_factor_item')
 export class PresentFactorItemEntity extends BaseEntity {
@@ -23,14 +23,14 @@ export class PresentFactorItemEntity extends BaseEntity {
     (products) => products.CategoryProductMenu,
     { onDelete: 'CASCADE' },
   )
-  Product: ProductMenuEntity;
+  Product: Relation<ProductMenuEntity>;
 
   @ManyToOne(
     () => PresentFactorEntity,
     (presentOrderTable) => presentOrderTable.FactorPresentOrderTables,
     { onDelete: 'CASCADE' },
   )
-  PresentOrderTable: PresentFactorEntity;
+  PresentOrderTable: Relation<PresentFactorEntity>;
 
   //#endregion
 }

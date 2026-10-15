@@ -1,12 +1,14 @@
-import { Entity, ManyToOne, OneToMany, Column } from 'typeorm';
-import { ProductPricingEntity } from './ProductPricing.Entity';
-import { ProductUnitDetailEntity } from './ProductUnitDetail.Entity';
-import { BaseEntity } from './Seed/Base.Entity';
-import { UnitPricingEntity } from './UnitPricing.Entity';
-import { ProductUnitRatioPricingEntity } from './ProductUnitRatioPricing.Entity';
+import { Entity, ManyToOne, OneToMany, Column, type Relation } from 'typeorm';
+import { ProductPricingEntity } from './ProductPricing.Entity.js';
+import { ProductUnitDetailEntity } from './ProductUnitDetail.Entity.js';
+import { BaseEntity } from './Seed/Base.Entity.js';
+import { UnitPricingEntity } from './UnitPricing.Entity.js';
+import { ProductUnitRatioPricingEntity } from './ProductUnitRatioPricing.Entity.js';
 
 @Entity('product_unit_pricing')
 export class ProductUnitPricingEntity extends BaseEntity {
+  //#region properties
+
   @Column({ type: 'float', nullable: false })
   Ratio: number;
 
@@ -30,15 +32,19 @@ export class ProductUnitPricingEntity extends BaseEntity {
   })
   Profit: number;
 
+  //#endregion
+
+  //#region relations
+
   @ManyToOne(() => ProductPricingEntity, (product) => product.ProductUnits, {
     onDelete: 'CASCADE',
   })
-  ProductPricing: ProductPricingEntity;
+  ProductPricing: Relation<ProductPricingEntity>;
 
   @ManyToOne(() => UnitPricingEntity, (unit) => unit.ProductUnits, {
     onDelete: 'CASCADE',
   })
-  UnitPricing: UnitPricingEntity;
+  UnitPricing: Relation<UnitPricingEntity>;
 
   @OneToMany(
     () => ProductUnitPricingEntity,
@@ -47,7 +53,7 @@ export class ProductUnitPricingEntity extends BaseEntity {
       onDelete: 'CASCADE',
     },
   )
-  ProductUnit: ProductUnitPricingEntity[];
+  ProductUnit: Relation<ProductUnitPricingEntity[]>;
 
   @OneToMany(
     () => ProductUnitRatioPricingEntity,
@@ -56,7 +62,7 @@ export class ProductUnitPricingEntity extends BaseEntity {
       onDelete: 'CASCADE',
     },
   )
-  ProductUnitRatios1: ProductUnitRatioPricingEntity[];
+  ProductUnitRatios1: Relation<ProductUnitRatioPricingEntity[]>;
 
   @OneToMany(
     () => ProductUnitRatioPricingEntity,
@@ -65,7 +71,7 @@ export class ProductUnitPricingEntity extends BaseEntity {
       onDelete: 'CASCADE',
     },
   )
-  ProductUnitRatios2: ProductUnitRatioPricingEntity[];
+  ProductUnitRatios2: Relation<ProductUnitRatioPricingEntity[]>;
 
   @OneToMany(
     () => ProductUnitDetailEntity,
@@ -75,7 +81,7 @@ export class ProductUnitPricingEntity extends BaseEntity {
       onDelete: 'CASCADE',
     },
   )
-  ProductUnitDetailParents: ProductUnitDetailEntity[];
+  ProductUnitDetailParents: Relation<ProductUnitDetailEntity[]>;
 
   @OneToMany(
     () => ProductUnitDetailEntity,
@@ -84,5 +90,7 @@ export class ProductUnitPricingEntity extends BaseEntity {
       onDelete: 'CASCADE',
     },
   )
-  ProductUnitDetailChildren: ProductUnitDetailEntity[];
+  ProductUnitDetailChildren: Relation<ProductUnitDetailEntity[]>;
+
+  //#endregion
 }

@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
-import { IUserService } from './Interfaces/User.Service.Interface';
+import { IUserService } from './Interfaces/User.Service.Interface.js';
 import {
   CreateDashboardCapabilityModel,
   CreateDashboardCapabilityUserModel,
@@ -23,7 +23,7 @@ import {
   UpdateRoleModel,
   UpdateUserModel,
   UpdateUserProfileModel,
-} from '../../Domain/Models/User.Service.Model';
+} from '../../Domain/Models/User.Service.Model.js';
 import {
   CreateDashboardCapabilityUserViewModel,
   CreateDashboardCapabilityViewModel,
@@ -44,21 +44,21 @@ import {
   UpdateRoleViewModel,
   UpdateUserProfileViewModel,
   UpdateUserViewModel,
-} from '../../Domain/ViewModels/User.Service.ViewModel';
-import { HttpExceptionCustom } from 'src/Api/Exceptions/HttpExceptionCustom';
-import { ConnectionNameMysql } from 'src/Domain/Entities/Mysql/Seed/ConnectionNameMysql';
-import { UserEntity } from 'src/Domain/Entities/Mysql/User.Entity';
-import { RoleEntity } from 'src/Domain/Entities/Mysql/Role.Entity';
-import { DashboardCapabilityUserEntity } from 'src/Domain/Entities/Mysql/DashboardCapabilityUser.Entity';
-import { RoleUserEntity } from 'src/Domain/Entities/Mysql/RoleUser.Entity';
-import { DashboardCapabilityEntity } from 'src/Domain/Entities/Mysql/DashboardCapability.Entity';
-import { HttpExceptionMessageCustom } from 'src/Share/Constants/HttpExceptionMessageCustom';
-import { Hashing } from 'src/Share/Utils/Hashing';
+} from '../../Domain/ViewModels/User.Service.ViewModel.js';
+import { JwtService } from './Jwt.Service.js';
+import { UserEntity } from '../../Domain/Entities/Mysql/User.Entity.js';
+import { ConnectionNameMysql } from '../../Domain/Entities/Mysql/Seed/ConnectionNameMysql.js';
+import { DashboardCapabilityUserEntity } from '../../Domain/Entities/Mysql/DashboardCapabilityUser.Entity.js';
+import { RoleUserEntity } from '../../Domain/Entities/Mysql/RoleUser.Entity.js';
+import { DashboardCapabilityEntity } from '../../Domain/Entities/Mysql/DashboardCapability.Entity.js';
+import { RoleEntity } from '../../Domain/Entities/Mysql/Role.Entity.js';
+import { HttpExceptionCustom } from '../../Api/Exceptions/HttpExceptionCustom.js';
+import { HttpExceptionMessageCustom } from '../../Domain/Constants/HttpExceptionMessageCustom.js';
 import {
   ApplicationConfigurationKeys,
   ApplicationConfigurationValues,
-} from 'src/Share/Configuration/Parameter/Application.Configuration';
-import { JwtService } from './Jwt.Service';
+} from '../../Persistence/Configuration/Parameter/Application.Configuration.js';
+import { Hashing } from '../../Share/Utils/Hashing.js';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -167,17 +167,18 @@ export class UserService implements IUserService {
       Phone: findUser.Phone,
       NationalCode: findUser.NationalCode,
       Profile: findUser.Profile,
-      Role: findUser.RoleUsers.map((val) => val.Role.Name),
+      Role: findUser.RoleUsers.map((val: any) => val.Role.Name),
       Access: findUser.DashboardCapabilityUser.map(
-        (val) => val.DashboardCapability.Name,
+        (val: any) => val.DashboardCapability.Name,
       ),
     };
   }
 
   async CreateUser(Param: CreateUserModel): Promise<CreateUserViewModel> {
-    const key = this.ConfigService.get<string>(
-      `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.TOKEN_HASH_PASSWORD}`,
-    );
+    const key =
+      this.ConfigService.get<string>(
+        `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.TOKEN_HASH_PASSWORD}`,
+      ) || '';
 
     Param.NationalCode = Param.NationalCode === '' ? '98' : Param.NationalCode;
 
@@ -233,7 +234,7 @@ export class UserService implements IUserService {
       },
     );
 
-    return { Update: resultUpdate.affected > 0 };
+    return { Update: (resultUpdate.affected || 0) > 0 };
   }
 
   async UpdateUserProfile(
@@ -272,7 +273,7 @@ export class UserService implements IUserService {
 
     const resultDelete = await this.UserRepository.delete({ Guid: Param.Id });
 
-    return { Delete: resultDelete.affected > 0 };
+    return { Delete: (resultDelete.affected || 0) > 0 };
   }
 
   //#endregion
@@ -436,7 +437,7 @@ export class UserService implements IUserService {
       User: findUser,
     });
 
-    return { Delete: resultDelete.affected > 0 };
+    return { Delete: (resultDelete.affected || 0) > 0 };
   }
 
   //#endregion
@@ -518,7 +519,7 @@ export class UserService implements IUserService {
       { Name: Param.Name },
     );
 
-    return { Update: resultUpdate.affected > 0 };
+    return { Update: (resultUpdate.affected || 0) > 0 };
   }
 
   async DeleteRole(Param: DeleteRoleModel): Promise<DeleteRoleViewModel> {
@@ -533,9 +534,9 @@ export class UserService implements IUserService {
       );
     }
 
-    await this.RoleRepository.delete({ Guid: Param.Id });
+    const resultDelete = await this.RoleRepository.delete({ Guid: Param.Id });
 
-    return { Delete: true };
+    return { Delete: (resultDelete.affected || 0) > 0 };
   }
 
   //#endregion

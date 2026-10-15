@@ -8,14 +8,14 @@ import { Reflector } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JOSEError } from 'jose/errors';
 import { Observable } from 'rxjs';
-import { DASHBOARD_CAPABILITY_KEY } from 'src/Api/Decorators/DashboardCapability.Decorator';
-import { HttpExceptionCustom } from 'src/Api/Exceptions/HttpExceptionCustom';
-import { HttpExceptionMessageCustom } from 'src/Share/Constants/HttpExceptionMessageCustom';
-import { ConnectionNameMysql } from 'src/Domain/Entities/Mysql/Seed/ConnectionNameMysql';
-import { UserEntity } from 'src/Domain/Entities/Mysql/User.Entity';
-import { EDashboardCapability } from 'src/Share/Enum/DashboardCapability.Enum';
 import { Repository } from 'typeorm';
-import { JwtService } from 'src/Application/Services/Jwt.Service';
+import { HttpExceptionMessageCustom } from '../../Domain/Constants/HttpExceptionMessageCustom.js';
+import { HttpExceptionCustom } from '../Exceptions/HttpExceptionCustom.js';
+import { JwtService } from '../../Application/Services/Jwt.Service.js';
+import { UserEntity } from '../../Domain/Entities/Mysql/User.Entity.js';
+import { ConnectionNameMysql } from '../../Domain/Entities/Mysql/Seed/ConnectionNameMysql.js';
+import { EDashboardCapability } from '../../Domain/Enum/DashboardCapability.Enum.js';
+import { DASHBOARD_CAPABILITY_KEY } from '../Decorators/DashboardCapability.Decorator.js';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

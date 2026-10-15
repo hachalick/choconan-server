@@ -1,6 +1,6 @@
-import { Column, Entity, OneToMany } from 'typeorm';
-import { BaseEntity } from './Seed/Base.Entity';
-import { ProductMenuEntity } from './ProductMenu.Entity';
+import { Column, Entity, OneToMany, type Relation } from 'typeorm';
+import { BaseEntity } from './Seed/Base.Entity.js';
+import { ProductMenuEntity } from './ProductMenu.Entity.js';
 
 @Entity('category_product_menu')
 export class CategoryProductMenuEntity extends BaseEntity {
@@ -64,7 +64,7 @@ export class CategoryProductMenuEntity extends BaseEntity {
     () => ProductMenuEntity,
     (products) => products.CategoryProductMenu,
   )
-  Products: ProductMenuEntity[];
+  Products: Relation<ProductMenuEntity[]>;
 
   //#endregion
 }

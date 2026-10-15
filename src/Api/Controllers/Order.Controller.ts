@@ -17,15 +17,13 @@ import {
   OrderTableDto,
   UpdateOrderDto,
   UpdateOrderItemDto,
-} from '../DTOs/Order.Controller.DTO';
+} from '../../Domain/DTOs/Order.Controller.DTO.js';
 import { ApiHeader, ApiQuery, ApiTags } from '@nestjs/swagger';
-import {
-  CheckExistAccessTokenInHeaderGuard,
-  CheckNotExpiresTokenGuard,
-} from 'src/Api/Guards/Auth.Guard';
-import { DashboardCapabilityGuard } from '../Decorators/DashboardCapability.Decorator';
-import { EDashboardCapability } from 'src/Share/Enum/DashboardCapability.Enum';
-import { OrderService } from 'src/Application/Services/Order.Service';
+import { DashboardCapabilityGuard } from '../Decorators/DashboardCapability.Decorator.js';
+import { OrderService } from '../../Application/Services/Order.Service.js';
+import { CheckExistAccessTokenInHeaderGuard, CheckNotExpiresTokenGuard } from '../Guards/Auth.Guard.js';
+import { EDashboardCapability } from '../../Domain/Enum/DashboardCapability.Enum.js';
+
 
 @ApiTags('Order')
 @Controller('order')
@@ -127,13 +125,13 @@ export class OrderController {
   @Get('order')
   @ApiHeader({ name: 'access_token', required: true })
   @DashboardCapabilityGuard('access_token', EDashboardCapability.READ_ORDER)
-  @ApiQuery({ name: 'start_day', required: false, type: String })
-  @ApiQuery({ name: 'end_day', required: false, type: String })
-  @ApiQuery({ name: 'is_pay', required: false, type: Boolean })
+  @ApiQuery({ name: 'EndDay', required: false, type: String })
+  @ApiQuery({ name: 'StartDay', required: false, type: String })
+  @ApiQuery({ name: 'IsPay', required: false, type: Boolean })
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckExistAccessTokenInHeaderGuard)
   ReadOrderList(
-    @Headers('access_token') AccessToken: string,
+    // @Headers('access_token') AccessToken: string,
     @Query('EndDay') EndDay?: string,
     @Query('StartDay') StartDay?: string,
     @Query('IsPay', new ParseBoolPipe({ optional: true })) IsPay?: boolean,

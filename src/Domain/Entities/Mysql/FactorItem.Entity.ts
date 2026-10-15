@@ -1,6 +1,6 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
-import { FactorEntity } from './Factor.Entity';
-import { BaseEntity } from './Seed/Base.Entity';
+import { Column, Entity, ManyToOne, type Relation } from 'typeorm';
+import { FactorEntity } from './Factor.Entity.js';
+import { BaseEntity } from './Seed/Base.Entity.js';
 
 @Entity('factor_item')
 export class FactorItemEntity extends BaseEntity {
@@ -65,7 +65,7 @@ export class FactorItemEntity extends BaseEntity {
   @ManyToOne(() => FactorEntity, (factorEntity) => factorEntity.FactorItems, {
     onDelete: 'CASCADE',
   })
-  Factor: FactorEntity;
+  Factor: Relation<FactorEntity>;
 
   //#endregion
 }

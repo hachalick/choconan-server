@@ -1,8 +1,10 @@
 import { Column, Entity } from 'typeorm';
-import { BaseEntity } from './Seed/Base.Entity';
+import { BaseEntity } from './Seed/Base.Entity.js';
 
 @Entity('cost_pricing')
 export class CostPricingEntity extends BaseEntity {
+  //#region properties
+
   @Column({
     type: 'varchar',
     length: 200,
@@ -20,4 +22,6 @@ export class CostPricingEntity extends BaseEntity {
     unique: false,
   })
   Price: number;
+
+  //#endregion
 }

@@ -1,10 +1,12 @@
-import { Column, Entity, OneToMany } from 'typeorm';
-import { RoleUserEntity } from './RoleUser.Entity';
-import { BaseEntity } from './Seed/Base.Entity';
-import { DashboardCapabilityUserEntity } from './DashboardCapabilityUser.Entity';
+import { Column, Entity, OneToMany, type Relation } from 'typeorm';
+import { BaseEntity } from './Seed/Base.Entity.js';
+import { RoleUserEntity } from './RoleUser.Entity.js';
+import { DashboardCapabilityUserEntity } from './DashboardCapabilityUser.Entity.js';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
+  //#region properties
+
   @Column({
     type: 'varchar',
     nullable: true,
@@ -56,10 +58,14 @@ export class UserEntity extends BaseEntity {
   })
   Phone: string;
 
+  //#endregion
+
+  //#region relations
+
   @OneToMany(() => RoleUserEntity, (rolesUser) => rolesUser.User, {
     onDelete: 'CASCADE',
   })
-  RoleUsers: RoleUserEntity[];
+  RoleUsers: Relation<RoleUserEntity[]>;
 
   @OneToMany(
     () => DashboardCapabilityUserEntity,
@@ -68,5 +74,7 @@ export class UserEntity extends BaseEntity {
       onDelete: 'CASCADE',
     },
   )
-  DashboardCapabilityUser: DashboardCapabilityUserEntity[];
+  DashboardCapabilityUser: Relation<DashboardCapabilityUserEntity[]>;
+
+  //#endregion
 }

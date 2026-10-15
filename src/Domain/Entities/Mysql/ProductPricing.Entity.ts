@@ -1,9 +1,11 @@
-import { Column, Entity, OneToMany } from 'typeorm';
-import { BaseEntity } from './Seed/Base.Entity';
-import { ProductUnitPricingEntity } from './ProductUnitPricing.Entity';
+import { Column, Entity, OneToMany, type Relation } from 'typeorm';
+import { BaseEntity } from './Seed/Base.Entity.js';
+import { ProductUnitPricingEntity } from './ProductUnitPricing.Entity.js';
 
 @Entity('product_pricing')
 export class ProductPricingEntity extends BaseEntity {
+  //#region properties
+
   @Column({
     type: 'float',
     nullable: false,
@@ -21,6 +23,10 @@ export class ProductPricingEntity extends BaseEntity {
   })
   Name: string;
 
+  //#endregion
+
+  //#region relations
+
   @OneToMany(
     () => ProductUnitPricingEntity,
     (productUnit) => productUnit.ProductPricing,
@@ -28,5 +34,7 @@ export class ProductPricingEntity extends BaseEntity {
       onDelete: 'CASCADE',
     },
   )
-  ProductUnits: ProductUnitPricingEntity[];
+  ProductUnits: Relation<ProductUnitPricingEntity[]>;
+
+  //#endregion
 }

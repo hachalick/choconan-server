@@ -1,9 +1,9 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { CategoryProductMenuEntity } from './CategoryProductMenu.Entity';
-import { BaseEntity } from './Seed/Base.Entity';
-import { ContentEconomicPackageEntity } from './ContentEconomicPackage.Entity';
-import { PresentFactorItemEntity } from './FactorPresentOrder.Entity';
-import { ProductUnitPricingEntity } from './ProductUnitPricing.Entity';
+import { Column, Entity, ManyToOne, OneToMany, type Relation } from 'typeorm';
+import { CategoryProductMenuEntity } from './CategoryProductMenu.Entity.js';
+import { BaseEntity } from './Seed/Base.Entity.js';
+import { ContentEconomicPackageEntity } from './ContentEconomicPackage.Entity.js';
+import { PresentFactorItemEntity } from './FactorPresentOrder.Entity.js';
+import { ProductUnitPricingEntity } from './ProductUnitPricing.Entity.js';
 
 @Entity('product_menu')
 export class ProductMenuEntity extends BaseEntity {
@@ -91,21 +91,21 @@ export class ProductMenuEntity extends BaseEntity {
     (categoryProduct) => categoryProduct.Products,
     { onDelete: 'CASCADE' },
   )
-  CategoryProductMenu: CategoryProductMenuEntity;
+  CategoryProductMenu: Relation<CategoryProductMenuEntity>;
 
   @OneToMany(
     () => PresentFactorItemEntity,
     (detailsPresentOrder) => detailsPresentOrder.PresentOrderTable,
     { onDelete: 'CASCADE' },
   )
-  DetailsPresentOrders: PresentFactorItemEntity[];
+  DetailsPresentOrders: Relation<PresentFactorItemEntity[]>;
 
   @OneToMany(
     () => ContentEconomicPackageEntity,
     (contentEconomicPackage) => contentEconomicPackage.ProductMenu,
     { onDelete: 'CASCADE' },
   )
-  ContentEconomicPackages: ContentEconomicPackageEntity[];
+  ContentEconomicPackages: Relation<ContentEconomicPackageEntity[]>;
 
   @OneToMany(
     () => ProductUnitPricingEntity,
@@ -114,7 +114,7 @@ export class ProductMenuEntity extends BaseEntity {
       onDelete: 'CASCADE',
     },
   )
-  ProductUnits: ProductUnitPricingEntity[];
+  ProductUnits: Relation<ProductUnitPricingEntity[]>;
 
   //#endregion
 }

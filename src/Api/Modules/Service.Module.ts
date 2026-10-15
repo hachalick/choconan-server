@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProductMenuEntity } from 'src/Domain/Entities/Mysql/ProductMenu.Entity';
-import { ConnectionNameMysql } from 'src/Domain/Entities/Mysql/Seed/ConnectionNameMysql';
-import { UserEntity } from 'src/Domain/Entities/Mysql/User.Entity';
-import { JwtModule } from './Jwt.Module';
-import { ServiceController } from '../Controllers/Service.Controller';
-import { ServiceService } from 'src/Application/Services/Service.Service';
+import { ServiceService } from '../../Application/Services/Service.Service.js';
+import { ServiceController } from '../Controllers/Service.Controller.js';
+import { JwtModule } from './Jwt.Module.js';
+import { ConnectionNameMysql } from '../../Domain/Entities/Mysql/Seed/ConnectionNameMysql.js';
+import { UserEntity } from '../../Domain/Entities/Mysql/User.Entity.js';
+import { ProductMenuEntity } from '../../Domain/Entities/Mysql/ProductMenu.Entity.js';
 
 @Module({
   imports: [

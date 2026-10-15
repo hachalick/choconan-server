@@ -1,4 +1,4 @@
-import { BaseResponseModel } from './BaseResponse.Model';
+import { BaseResponseModel } from './BaseResponse.Model.js';
 
 export class SuccessResponseModel<T> implements BaseResponseModel<T> {
   Ok: boolean = true;

@@ -4,7 +4,7 @@
 /build
 /documentation
 /test
-/src/Share/Configuration/Parameter
+/src/Persistence/Configuration/Parameter/**.Configuration.ts
 /public
 
 # Logs

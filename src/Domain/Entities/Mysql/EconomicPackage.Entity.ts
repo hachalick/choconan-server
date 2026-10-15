@@ -1,9 +1,11 @@
-import { Column, Entity, OneToMany } from 'typeorm';
-import { BaseEntity } from './Seed/Base.Entity';
-import { ContentEconomicPackageEntity } from './ContentEconomicPackage.Entity';
+import { Column, Entity, OneToMany, type Relation } from 'typeorm';
+import { BaseEntity } from './Seed/Base.Entity.js';
+import { ContentEconomicPackageEntity } from './ContentEconomicPackage.Entity.js';
 
 @Entity('economic_package')
 export class EconomicPackageEntity extends BaseEntity {
+  //#region properties
+
   @Column({
     type: 'varchar',
     length: 600,
@@ -62,9 +64,15 @@ export class EconomicPackageEntity extends BaseEntity {
   })
   IsShowMenu: boolean;
 
+  //#endregion
+
+  //#region relations
+
   @OneToMany(
     () => ContentEconomicPackageEntity,
     (contentEconomicPackage) => contentEconomicPackage.EconomicPackage,
   )
-  ContentEconomicPackages: ContentEconomicPackageEntity[];
+  ContentEconomicPackages: Relation<ContentEconomicPackageEntity[]>;
+
+  //#endregion
 }

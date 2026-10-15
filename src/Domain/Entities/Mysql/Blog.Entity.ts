@@ -1,8 +1,10 @@
 import { Entity, Column } from 'typeorm';
-import { BaseEntity } from './Seed/Base.Entity';
+import { BaseEntity } from './Seed/Base.Entity.js';
 
 @Entity('blog')
 export class BlogEntity extends BaseEntity {
+  //#region properties
+
   @Column({
     type: 'boolean',
     default: false,
@@ -37,4 +39,6 @@ export class BlogEntity extends BaseEntity {
 
   @Column({ type: 'text', nullable: true, unique: false, charset: 'utf8' })
   Text: string;
+
+  //#endregion
 }

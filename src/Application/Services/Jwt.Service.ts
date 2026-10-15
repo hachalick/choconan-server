@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SignJWT, jwtVerify } from 'jose';
-import {
-  ApplicationConfigurationKeys,
-  ApplicationConfigurationValues,
-} from 'src/Share/Configuration/Parameter/Application.Configuration';
-import { IJwtService } from './Interfaces/Jwt.Service.Interface';
+import { IJwtService } from './Interfaces/Jwt.Service.Interface.js';
 import {
   PayloadAccessTokenModel,
   PayloadRefreshTokenModel,
-} from '../../Domain/Models/Jwt.Service.Model';
+} from '../../Domain/Models/Jwt.Service.Model.js';
 import {
   PayloadAccessTokenViewModel,
   PayloadRefreshTokenViewModel,
-} from '../../Domain/ViewModels/Jwt.Service.ViewModel';
+} from '../../Domain/ViewModels/Jwt.Service.ViewModel.js';
 import { z } from 'zod';
+import {
+  ApplicationConfigurationKeys,
+  ApplicationConfigurationValues,
+} from '../../Persistence/Configuration/Parameter/Application.Configuration.js';
 
 const PayloadAccessTokenSchema = z.object({
   NationalCode: z.string(),
@@ -46,20 +46,23 @@ export class JwtService implements IJwtService {
   protected secretRefresh: Uint8Array;
 
   constructor(private configService: ConfigService) {
-    const token_AccessToken = this.configService.get<string>(
-      `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.KEY_ACCESS_TOKEN}`,
-    );
-    const token_refresh_token = this.configService.get<string>(
-      `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.KEY_REFRESH_TOKEN}`,
-    );
+    const token_AccessToken =
+      this.configService.get<string>(
+        `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.KEY_ACCESS_TOKEN}`,
+      ) || '';
+    const token_refresh_token =
+      this.configService.get<string>(
+        `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.KEY_REFRESH_TOKEN}`,
+      ) || '';
     this.secretAccess = new TextEncoder().encode(token_AccessToken);
     this.secretRefresh = new TextEncoder().encode(token_refresh_token);
   }
 
   async CreateRefreshToken(Param: PayloadAccessTokenModel): Promise<string> {
-    const time = this.configService.get<string>(
-      `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.KEY_TIME_REFRESH_TOKEN}`,
-    );
+    const time =
+      this.configService.get<string>(
+        `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.KEY_TIME_REFRESH_TOKEN}`,
+      ) || '';
     const token = await new SignJWT({ ...Param })
       .setProtectedHeader({ alg: 'HS256' })
       .setSubject('refresh')
@@ -93,9 +96,10 @@ export class JwtService implements IJwtService {
   }
 
   async CreateAccessToken(Param: PayloadRefreshTokenModel): Promise<string> {
-    const time = this.configService.get<string>(
-      `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.KEY_TIME_ACCESS_TOKEN}`,
-    );
+    const time =
+      this.configService.get<string>(
+        `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.KEY_TIME_ACCESS_TOKEN}`,
+      ) || '';
     const token = await new SignJWT({ ...Param })
       .setProtectedHeader({ alg: 'HS256' })
       .setSubject('access')

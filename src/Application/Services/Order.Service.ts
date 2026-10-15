@@ -10,13 +10,7 @@ import {
 import moment from 'moment-jalaali';
 import { WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { ConnectionNameMysql } from 'src/Domain/Entities/Mysql/Seed/ConnectionNameMysql';
-import { ProductMenuEntity } from 'src/Domain/Entities/Mysql/ProductMenu.Entity';
-import { PresentFactorEntity } from 'src/Domain/Entities/Mysql/PresentFactor.Entity';
-import { PresentFactorItemEntity } from 'src/Domain/Entities/Mysql/FactorPresentOrder.Entity';
-import { FactorItemEntity } from 'src/Domain/Entities/Mysql/FactorItem.Entity';
-import { FactorEntity } from 'src/Domain/Entities/Mysql/Factor.Entity';
-import { type IOrderService } from './Interfaces/Order.Service.Interface';
+import { type IOrderService } from './Interfaces/Order.Service.Interface.js';
 import {
   AcceptStatusTableModel,
   CreateOrderItemModel,
@@ -40,7 +34,7 @@ import {
   UpdateOrderModel,
   UpdatePayStatusOrderModel,
   UpdateTableModel,
-} from '../../Domain/Models/Order.Service.Model';
+} from '../../Domain/Models/Order.Service.Model.js';
 import {
   AcceptStatusTableViewModel,
   CreateOrderItemViewModel,
@@ -64,9 +58,15 @@ import {
   UpdateOrderViewModel,
   UpdatePayStatusOrderViewModel,
   UpdateTableViewModel,
-} from '../../Domain/ViewModels/Order.Service.ViewModel';
-import { HttpExceptionCustom } from 'src/Api/Exceptions/HttpExceptionCustom';
-import { HttpExceptionMessageCustom } from 'src/Share/Constants/HttpExceptionMessageCustom';
+} from '../../Domain/ViewModels/Order.Service.ViewModel.js';
+import { ProductMenuEntity } from '../../Domain/Entities/Mysql/ProductMenu.Entity.js';
+import { ConnectionNameMysql } from '../../Domain/Entities/Mysql/Seed/ConnectionNameMysql.js';
+import { PresentFactorEntity } from '../../Domain/Entities/Mysql/PresentFactor.Entity.js';
+import { PresentFactorItemEntity } from '../../Domain/Entities/Mysql/FactorPresentOrder.Entity.js';
+import { FactorEntity } from '../../Domain/Entities/Mysql/Factor.Entity.js';
+import { FactorItemEntity } from '../../Domain/Entities/Mysql/FactorItem.Entity.js';
+import { HttpExceptionCustom } from '../../Api/Exceptions/HttpExceptionCustom.js';
+import { HttpExceptionMessageCustom } from '../../Domain/Constants/HttpExceptionMessageCustom.js';
 
 @Injectable()
 export class OrderService implements IOrderService {
@@ -141,7 +141,7 @@ export class OrderService implements IOrderService {
       Guid: Param.Id,
     });
 
-    return { Delete: res.affected > 0 };
+    return { Delete: (res.affected || 0) > 0 };
   }
 
   //#endregion
@@ -372,12 +372,10 @@ export class OrderService implements IOrderService {
 
       const cursorNow = moment().startOf('jMonth');
 
-      if (
-        !(
-          year === Number(cursorNow.format('jYYYY')) &&
-          month === Number(cursorNow.format('jM'))
-        )
-      ) {
+      if (!(
+        year === Number(cursorNow.format('jYYYY')) &&
+        month === Number(cursorNow.format('jM'))
+      )) {
         averagePrice =
           Math.floor((totalPrice * raghamAshar) / daysInMonth) / raghamAshar;
         averageItems =
@@ -400,85 +398,6 @@ export class OrderService implements IOrderService {
 
     return result;
   }
-
-  // async ReadOrderMonthlyList(
-  //   Param: ReadOrderMonthlyListModel,
-  // ): Promise<ReadOrderMonthlyListViewModel[]> {
-  //   const result: ReadOrderMonthlyListViewModel[] = [];
-
-  //   let cursor = moment().startOf('jMonth');
-
-  //   for (let i = Param.Space; i < Param.Count + Param.Space; i++) {
-  //     const year = Number(cursor.format('jYYYY'));
-  //     const month = Number(cursor.format('jM'));
-  //     cursor = cursor.subtract(1, 'jMonth');
-
-  //     const momentJ = moment(`${year}/${month}/01`, 'jYYYY/jM/jD');
-  //     const startDate = momentJ.startOf('jMonth');
-  //     const endDate = momentJ.endOf('jMonth');
-
-  //     const factors = await this.FactorRepository.find({
-  //       where: { FactorDate: Between(startDate.toDate(), endDate.toDate()) },
-  //       relations: { FactorItems: true },
-  //     });
-
-  //     console.log(startDate.toDate(), endDate.toDate());
-
-  //     let totalPrice = 0;
-  //     let totalItems = 0;
-  //     const raghamAshar = 100;
-  //     let averagePrice = 0;
-  //     let averageItems = 0;
-  //     let averageFactors = 0;
-
-  //     const productMap = {};
-
-  //     for (const factor of factors) {
-  //       for (const factorItem of factor.FactorItems) {
-  //         totalPrice +=
-  //           factorItem.ProductCount *
-  //           (factorItem.ProductPrice - factorItem.ProductDiscount);
-  //         totalItems += factorItem.ProductCount;
-  //         productMap[factorItem.ProductName] =
-  //           (productMap[factorItem.ProductName] || 0) + factorItem.ProductCount;
-  //       }
-  //     }
-
-  //     const cursorNow = moment().startOf('jMonth');
-
-  //     if (
-  //       !(
-  //         year === Number(cursorNow.format('jYYYY')) &&
-  //         month === Number(cursorNow.format('jM'))
-  //       )
-  //     ) {
-  //       averagePrice =
-  //         Math.floor(
-  //           (totalPrice * raghamAshar) / Number(endDate.format('jD')),
-  //         ) / raghamAshar;
-  //       averageItems =
-  //         Math.floor(
-  //           (totalItems * raghamAshar) / Number(endDate.format('jD')),
-  //         ) / raghamAshar;
-  //       averageFactors =
-  //         Math.floor(
-  //           (factors.length * raghamAshar) / Number(endDate.format('jD')),
-  //         ) / raghamAshar;
-  //     }
-
-  //     result.push({
-  //       month: `${year}/${month}`,
-  //       totalFactors: factors.length,
-  //       averageFactors,
-  //       totalItems,
-  //       averageItems,
-  //       totalPrice,
-  //       averagePrice,
-  //     });
-  //   }
-
-  //   return result;
-  // }
 
   async ReadOrderList(
     Param: ReadOrderListModel,
@@ -529,6 +448,8 @@ export class OrderService implements IOrderService {
       relations: { FactorItems: true },
     });
 
+    res.forEach((val) => console.log(val.FactorDate));
+
     return res.map((factor) => ({
       Id: factor.Guid,
       CustomerMobile: factor.CustomerMobile,
@@ -537,13 +458,14 @@ export class OrderService implements IOrderService {
       IsPay: factor.IsPay,
       Location: factor.Location,
       Tax: factor.Tax,
-      FactorItems: factor.FactorItems.map((factorItem) => ({
-        Id: factorItem.Guid,
-        ProductCount: factorItem.ProductCount,
-        ProductDiscount: factorItem.ProductDiscount,
-        ProductName: factorItem.ProductName,
-        ProductPrice: factorItem.ProductPrice,
-      })),
+      FactorItems: [],
+      // FactorItems: factor.FactorItems.map((factorItem) => ({
+      //   Id: factorItem.Guid,
+      //   ProductCount: factorItem.ProductCount,
+      //   ProductDiscount: factorItem.ProductDiscount,
+      //   ProductName: factorItem.ProductName,
+      //   ProductPrice: factorItem.ProductPrice,
+      // })),
     }));
   }
 
@@ -579,6 +501,42 @@ export class OrderService implements IOrderService {
       })),
     };
   }
+
+  // async ReorderFactorsOfDay(targetDate: Date): Promise<void> {
+  //   // ۱. محاسبه‌ی ابتدای روز و ابتدای روز بعد
+  //   const startOfDay = new Date(
+  //     targetDate.getFullYear(),
+  //     targetDate.getMonth(),
+  //     targetDate.getDate(),
+  //     0,
+  //     0,
+  //     0,
+  //     0,
+  //   );
+
+  //   const startOfNextDay = new Date(startOfDay);
+  //   startOfNextDay.setDate(startOfNextDay.getDate() + 1);
+
+  //   // ۲. گرفتن فاکتورهای اون روز با ترتیب FactorDate
+  //   const factors = await this.factorRepository.find({
+  //     where: {
+  //       FactorDate: And(MoreThanOrEqual(startOfDay), LessThan(startOfNextDay)),
+  //     },
+  //     order: { FactorDate: 'ASC' }, // ⬅️ مرتب‌سازی توی DB
+  //   });
+
+  //   if (factors.length === 0) return;
+
+  //   // ۳. آپدیت شماره‌ها
+  //   let counter = 1;
+  //   for (const factor of factors) {
+  //     await this.factorRepository.update(
+  //       { Id: factor.Id },
+  //       { FactorNumber: counter },
+  //     );
+  //     counter++;
+  //   }
+  // }
 
   async CreateOrder(Param: CreateOrderModel): Promise<CreateOrderViewModel> {
     const nowDate = new Date();
@@ -698,7 +656,7 @@ export class OrderService implements IOrderService {
       },
     );
 
-    return { Update: res.affected > 0 };
+    return { Update: (res.affected || 0) > 0 };
   }
 
   async UpdatePayStatusOrder(
@@ -722,7 +680,7 @@ export class OrderService implements IOrderService {
       { IsPay: Param.IsPay },
     );
 
-    return { Update: res.affected > 0 };
+    return { Update: (res.affected || 0) > 0 };
   }
 
   async DeleteOrder(Param: DeleteOrderModel): Promise<DeleteOrderViewModel> {
@@ -767,7 +725,7 @@ export class OrderService implements IOrderService {
       counter++;
     }
 
-    return { Delete: res.affected > 0 };
+    return { Delete: (res.affected || 0) > 0 };
   }
 
   //#endregion
@@ -815,10 +773,6 @@ export class OrderService implements IOrderService {
       where: { Name: Param.ProductName },
     });
 
-    // if (Param.ProductPrice < 0) return { Update: false };
-    // if (Param.ProductCount < 0) return { Update: false };
-    // if (Param.ProductName.length === 0) return { Update: false };
-
     const res = await this.FactorItemRepository.update(
       { Guid: Param.Id },
       {
@@ -830,7 +784,7 @@ export class OrderService implements IOrderService {
       },
     );
 
-    return { Update: res.affected > 0 };
+    return { Update: (res.affected || 0) > 0 };
   }
 
   async DeleteOrderItem(
@@ -851,7 +805,7 @@ export class OrderService implements IOrderService {
 
     const res = await this.FactorItemRepository.delete({ Guid: Param.Id });
 
-    return { Delete: res.affected > 0 };
+    return { Delete: (res.affected || 0) > 0 };
   }
 
   //#endregion

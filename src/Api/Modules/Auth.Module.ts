@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { OtpEntity } from 'src/Domain/Entities/Mysql/Otp.Entity';
-import { ConnectionNameMysql } from 'src/Domain/Entities/Mysql/Seed/ConnectionNameMysql';
-import { UserEntity } from 'src/Domain/Entities/Mysql/User.Entity';
-import { UserModule } from './User.Module';
-import { JwtModule } from './Jwt.Module';
-import { ServiceModule } from './Service.Module';
-import { AuthService } from 'src/Application/Services/Auth.Service';
-import { AuthController } from '../Controllers/Auth.Controller';
-import { RoleEntity } from 'src/Domain/Entities/Mysql/Role.Entity';
-import { DashboardCapabilityEntity } from 'src/Domain/Entities/Mysql/DashboardCapability.Entity';
+import { AuthService } from '../../Application/Services/Auth.Service.js';
+import { AuthController } from '../Controllers/Auth.Controller.js';
+import { ServiceModule } from './Service.Module.js';
+import { JwtModule } from './Jwt.Module.js';
+import { ConnectionNameMysql } from '../../Domain/Entities/Mysql/Seed/ConnectionNameMysql.js';
+import { UserModule } from './User.Module.js';
+import { UserEntity } from '../../Domain/Entities/Mysql/User.Entity.js';
+import { OtpEntity } from '../../Domain/Entities/Mysql/Otp.Entity.js';
+import { RoleEntity } from '../../Domain/Entities/Mysql/Role.Entity.js';
+import { DashboardCapabilityEntity } from '../../Domain/Entities/Mysql/DashboardCapability.Entity.js';
 
 @Module({
   imports: [

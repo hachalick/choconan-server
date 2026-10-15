@@ -1,4 +1,4 @@
-import { BaseResponseModel } from './BaseResponse.Model';
+import { BaseResponseModel } from './BaseResponse.Model.js';
 
 export class ErrorResponseModel<T> implements BaseResponseModel<T> {
   Ok: boolean = false;
@@ -17,7 +17,7 @@ export class ErrorResponseModel<T> implements BaseResponseModel<T> {
   ) {
     this.Message = message;
     this.Code = code;
-    this.Value = null;
+    this.Value;
     this.Details = details;
     this.Timestamp = new Date().toISOString();
     this.Path = path;

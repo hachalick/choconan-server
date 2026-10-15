@@ -1,18 +1,17 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
-import moment from 'moment-jalaali';
-import { type IPricingService } from './Interfaces/Pricing.Service.Interfaces';
-import { ConnectionNameMysql } from 'src/Domain/Entities/Mysql/Seed/ConnectionNameMysql';
-import { ProductMenuEntity } from 'src/Domain/Entities/Mysql/ProductMenu.Entity';
-import { ProductPricingEntity } from 'src/Domain/Entities/Mysql/ProductPricing.Entity';
-import { UnitPricingEntity } from 'src/Domain/Entities/Mysql/UnitPricing.Entity';
-import { FactorItemEntity } from 'src/Domain/Entities/Mysql/FactorItem.Entity';
-import { FactorEntity } from 'src/Domain/Entities/Mysql/Factor.Entity';
-import { CostPricingEntity } from 'src/Domain/Entities/Mysql/CostPricing.Entity';
-import { ProductUnitDetailEntity } from 'src/Domain/Entities/Mysql/ProductUnitDetail.Entity';
-import { ProductUnitRatioPricingEntity } from 'src/Domain/Entities/Mysql/ProductUnitRatioPricing.Entity';
-import { ProductUnitPricingEntity } from 'src/Domain/Entities/Mysql/ProductUnitPricing.Entity';
+import { IPricingService } from './Interfaces/Pricing.Service.Interfaces.js';
+import { ConnectionNameMysql } from '../../Domain/Entities/Mysql/Seed/ConnectionNameMysql.js';
+import { ProductMenuEntity } from '../../Domain/Entities/Mysql/ProductMenu.Entity.js';
+import { ProductPricingEntity } from '../../Domain/Entities/Mysql/ProductPricing.Entity.js';
+import { UnitPricingEntity } from '../../Domain/Entities/Mysql/UnitPricing.Entity.js';
+import { ProductUnitPricingEntity } from '../../Domain/Entities/Mysql/ProductUnitPricing.Entity.js';
+import { FactorItemEntity } from '../../Domain/Entities/Mysql/FactorItem.Entity.js';
+import { ProductUnitRatioPricingEntity } from '../../Domain/Entities/Mysql/ProductUnitRatioPricing.Entity.js';
+import { ProductUnitDetailEntity } from '../../Domain/Entities/Mysql/ProductUnitDetail.Entity.js';
+import { CostPricingEntity } from '../../Domain/Entities/Mysql/CostPricing.Entity.js';
+import { FactorEntity } from '../../Domain/Entities/Mysql/Factor.Entity.js';
 import {
   CreateCostProductPricingModel,
   CreateDetailProductPricingModel,
@@ -35,7 +34,7 @@ import {
   UpdateProductUnitPricingModel,
   UpdateProductUnitRatioModel,
   UpdateUnitPricingModel,
-} from '../../Domain/Models/Pricing.Service.Model';
+} from '../../Domain/Models/Pricing.Service.Model.js';
 import {
   CreateCostProductPricingViewModel,
   CreateDetailProductPricingViewModel,
@@ -58,9 +57,10 @@ import {
   UpdateProductUnitPricingViewModel,
   UpdateProductUnitRatioViewModel,
   UpdateUnitPricingViewModel,
-} from '../../Domain/ViewModels/Pricing.Service.ViewModel';
-import { HttpExceptionCustom } from 'src/Api/Exceptions/HttpExceptionCustom';
-import { HttpExceptionMessageCustom } from 'src/Share/Constants/HttpExceptionMessageCustom';
+} from '../../Domain/ViewModels/Pricing.Service.ViewModel.js';
+import { HttpExceptionCustom } from '../../Api/Exceptions/HttpExceptionCustom.js';
+import { HttpExceptionMessageCustom } from '../../Domain/Constants/HttpExceptionMessageCustom.js';
+import moment from 'moment-jalaali';
 
 @Injectable()
 export class PricingService implements IPricingService {
@@ -167,7 +167,7 @@ export class PricingService implements IPricingService {
       },
     );
 
-    return { Update: resultUpdate.affected > 0 };
+    return { Update: (resultUpdate.affected || 0) > 0 };
   }
 
   async DeleteUnitPricing(
@@ -188,7 +188,7 @@ export class PricingService implements IPricingService {
       Guid: Param.Id,
     });
 
-    return { Delete: res.affected > 0 };
+    return { Delete: (res.affected || 0) > 0 };
   }
 
   //#endregion
@@ -217,6 +217,8 @@ export class PricingService implements IPricingService {
     });
 
     const listF: { Id: bigint[]; Is: boolean }[] = [];
+
+    if (!product) return;
 
     for (const productUnit of product.ProductUnits) {
       for (const productUnitRatios of productUnit.ProductUnitRatios1) {
@@ -298,14 +300,21 @@ export class PricingService implements IPricingService {
       where: { Id },
     });
 
+    if (!product) throw new Error();
+    if (!product2) throw new Error();
+
     for (const clean of cleanList) {
       const findUnitPricing1 = await this.unitPricingRepository.findOne({
         where: { Id: clean.Id[0] },
       });
 
+      if (!findUnitPricing1) continue;
+
       const findUnitPricing2 = await this.unitPricingRepository.findOne({
         where: { Id: clean.Id[1] },
       });
+
+      if (!findUnitPricing2) continue;
 
       const findProductUnit1 = await this.productUnitPricingRepository.findOne({
         where: {
@@ -314,6 +323,8 @@ export class PricingService implements IPricingService {
         },
       });
 
+      if (!findProductUnit1) continue;
+
       const findProductUnit2 = await this.productUnitPricingRepository.findOne({
         where: {
           ProductPricing: product2,
@@ -321,15 +332,15 @@ export class PricingService implements IPricingService {
         },
       });
 
-      if (findProductUnit1 && findProductUnit2) {
-        const newpur = this.productUnitRatioPricingRepository.create({
-          IsRatio: clean.Is,
-          ProductUnitPricing1: findProductUnit1,
-          ProductUnitPricing2: findProductUnit2,
-        });
+      if (!findProductUnit2) continue;
 
-        await this.productUnitRatioPricingRepository.save(newpur);
-      }
+      const newpur = this.productUnitRatioPricingRepository.create({
+        IsRatio: clean.Is,
+        ProductUnitPricing1: findProductUnit1,
+        ProductUnitPricing2: findProductUnit2,
+      });
+
+      await this.productUnitRatioPricingRepository.save(newpur);
     }
   }
 
@@ -367,6 +378,8 @@ export class PricingService implements IPricingService {
       where: {},
       order: { CreateDate: 'ASC' },
     });
+
+    if (!fistFactor) throw new Error();
 
     const fistDateFactor = fistFactor.CreateDate;
     const dateNow = new Date();
@@ -432,7 +445,7 @@ export class PricingService implements IPricingService {
 
       if (Unit.ProductUnitDetailParents?.length > 0) {
         componentsCostTotal = Unit.ProductUnitDetailParents.reduce(
-          (sum, detail) => {
+          (sum: number, detail: any) => {
             return (
               sum +
               GetBaseUnitCost(detail.ChildProductUnitDetail.Guid) *
@@ -452,10 +465,10 @@ export class PricingService implements IPricingService {
       Guid: ProductPricing.Guid,
       Name: ProductPricing.Name,
       BuyPrice: ProductPricing.BuyPrice,
-      ProductUnit: ProductPricing.ProductUnits.map((item) => {
+      ProductUnit: ProductPricing.ProductUnits.map((item: any) => {
         const currentPricePerBase = GetBaseUnitCost(item.Guid);
 
-        const details = item.ProductUnitDetailParents.map((detail) => {
+        const details = item.ProductUnitDetailParents.map((detail: any) => {
           const childUnitId = detail.ChildProductUnitDetail.Guid;
           const childRatio = detail.ChildProductUnitDetail.Ratio || 1;
 
@@ -488,7 +501,10 @@ export class PricingService implements IPricingService {
           UnitId: item.UnitPricing.Guid,
           Ratio: item.Ratio,
           Profit: item.Profit,
-          SumDetail: details.reduce((sum, d) => sum + d.TotalPriceByUnit, 0),
+          SumDetail: details.reduce(
+            (sum: number, d: any) => sum + d.TotalPriceByUnit,
+            0,
+          ),
           PriceByUnit: currentPricePerBase,
           TotalPriceForRatio: currentPricePerBase * item.Ratio + item.Profit,
           CountSell: item.CountSell,
@@ -554,12 +570,12 @@ export class PricingService implements IPricingService {
       .filter((item) => item);
 
     const sumCountSell = listProductInMenu
-      .map((item) => item.CountSell)
+      .map((item: any) => item.CountSell)
       .reduce((a, b) => a + (b || 0), 0);
 
     const averageCountSell =
       listProductInMenu
-        .map((item) => item.CountSell)
+        .map((item: any) => item.CountSell)
         .reduce((a, b) => a + (b || 0), 0) / diffDays;
 
     const base_balance =
@@ -567,19 +583,11 @@ export class PricingService implements IPricingService {
         ? 0
         : AverageCost / averageCountSell;
 
-    listProductInMenu.forEach((item) => {
+    listProductInMenu.forEach((item: any) => {
       item.Balance = (item.ProfitPricing - base_balance) * item.CountSell;
     });
 
     //#endregion
-
-    pricingProduct.map((val) => {
-      val.ProductUnit.map((value) => {
-        // console.log(value);
-        // if (value.ProductMenuId == null || value.ProductMenuId == undefined)
-        // console.log(value);
-      });
-    });
 
     return {
       DayToWork: diffDays,
@@ -597,16 +605,16 @@ export class PricingService implements IPricingService {
         SumCountSell: sumCountSell,
         AverageCountSell: averageCountSell,
         SumBalance: listProductInMenu
-          .map((item) => item.Balance)
+          .map((item: any) => item.Balance)
           .reduce((a, b) => a + (b || 0), 0),
-        List: listProductInMenu,
+        List: listProductInMenu.filter((val) => val !== undefined),
       },
       ProductInPricing: {
         List: pricingProduct.map((val) => ({
           Id: val.Guid,
           BuyPrice: val.BuyPrice,
           Name: val.Name,
-          ProductUnit: val.ProductUnit.map((value) => ({
+          ProductUnit: val.ProductUnit.map((value: any) => ({
             ProductMenuId: value.ProductInMenu
               ? value.ProductInMenu.Guid
               : null,
@@ -621,7 +629,7 @@ export class PricingService implements IPricingService {
             PriceByTotalPrice: value.PriceByTotalPrice,
             TotalPriceForRatio: value.TotalPriceForRatio,
             CountSell: value.CountSell,
-            Detail: value.Detail.map((valueDetail) => ({
+            Detail: value.Detail.map((valueDetail: any) => ({
               Id: valueDetail.Guid,
               ProductName: valueDetail.ProductName,
               UnitName: valueDetail.UnitName,
@@ -693,7 +701,7 @@ export class PricingService implements IPricingService {
       { Name: Param.Name, BuyPrice: Param.Buy },
     );
 
-    return { Update: res.affected > 0 };
+    return { Update: (res.affected || 0) > 0 };
   }
 
   async DeleteProductPricing(
@@ -726,9 +734,13 @@ export class PricingService implements IPricingService {
       where: { Guid: Param.ProductPricingId },
     });
 
+    if (!findProductPricing) throw new Error();
+
     const findUnitPricing = await this.unitPricingRepository.findOne({
       where: { Guid: Param.UnitPricingId },
     });
+
+    if (!findUnitPricing) throw new Error();
 
     const productUnit = await this.productUnitPricingRepository.findOne({
       where: {
@@ -787,13 +799,13 @@ export class PricingService implements IPricingService {
       { Guid: Param.Id },
       {
         Ratio: Param.Ratio,
-        ProductMenuId: Param.ProductMenuId === '' ? null : Param.ProductMenuId,
+        ProductMenuId: Param.ProductMenuId,
         Profit: Param.Profit,
         UnitPricing: findProductUnitPricing,
       },
     );
 
-    return { Update: res.affected > 0 };
+    return { Update: (res.affected || 0) > 0 };
   }
 
   async DeleteProductUnitPricing(
@@ -895,31 +907,14 @@ export class PricingService implements IPricingService {
         where: { Guid: Param.ParentProductUnitDetailId },
       });
 
+    if (!findParentProductUnitDetail) throw new Error();
+
     const findChildProductUnitDetail =
       await this.productUnitPricingRepository.findOne({
         where: { Guid: Param.ChildProductUnitDetailId },
       });
 
-    // if (!findChildProductUnitDetail) {
-    //   throw new HttpExceptionCustom(
-    //     HttpExceptionMessageCustom.CostProductPricingIsExist,
-    //     HttpStatus.BAD_REQUEST,
-    //   );
-    // }
-
-    // const exist = await this.productUnitDetailRepository.exists({
-    //   where: {
-    //     ChildProductUnitDetail: findChildProductUnitDetail,
-    //     ParentProductUnitDetail: findParentProductUnitDetail,
-    //   },
-    // });
-
-    // if (exist) {
-    //   throw new HttpExceptionCustom(
-    //     HttpExceptionMessageCustom.CostProductPricingIsExist,
-    //     HttpStatus.BAD_REQUEST,
-    //   );
-    // }
+    if (!findChildProductUnitDetail) throw new Error();
 
     const newModel = this.productUnitDetailRepository.create({
       Amount: Param.Amount,
@@ -1079,7 +1074,7 @@ export class PricingService implements IPricingService {
       { Name: Param.Name, Price: Param.Price },
     );
 
-    return { Update: resultUpdate.affected > 0 };
+    return { Update: (resultUpdate.affected || 0) > 0 };
   }
 
   async DeleteCostProductPricing(

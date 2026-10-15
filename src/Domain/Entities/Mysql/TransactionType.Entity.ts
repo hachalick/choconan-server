@@ -1,9 +1,11 @@
-import { Column, Entity, OneToMany } from 'typeorm';
-import { TransactionFactorEntity } from './TransactionFactor.Entity';
-import { BaseEntity } from './Seed/Base.Entity';
+import { Column, Entity, OneToMany, type Relation } from 'typeorm';
+import { TransactionFactorEntity } from './TransactionFactor.Entity.js';
+import { BaseEntity } from './Seed/Base.Entity.js';
 
 @Entity('transaction_type')
 export class TransactionTypeEntity extends BaseEntity {
+  //#region properties
+
   @Column({
     type: 'varchar',
     length: 300,
@@ -14,9 +16,15 @@ export class TransactionTypeEntity extends BaseEntity {
   })
   TransactionType: string;
 
+  //#endregion
+
+  //#region relations
+
   @OneToMany(
     () => TransactionFactorEntity,
     (transaction_factors) => transaction_factors.TransactionType,
   )
-  TransactionFactors: TransactionFactorEntity[];
+  TransactionFactors: Relation<TransactionFactorEntity[]>;
+
+  //#endregion
 }

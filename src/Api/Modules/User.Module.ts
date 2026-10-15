@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DashboardCapabilityEntity } from 'src/Domain/Entities/Mysql/DashboardCapability.Entity';
-import { DashboardCapabilityUserEntity } from 'src/Domain/Entities/Mysql/DashboardCapabilityUser.Entity';
-import { RoleEntity } from 'src/Domain/Entities/Mysql/Role.Entity';
-import { RoleUserEntity } from 'src/Domain/Entities/Mysql/RoleUser.Entity';
-import { ConnectionNameMysql } from 'src/Domain/Entities/Mysql/Seed/ConnectionNameMysql';
-import { UserEntity } from 'src/Domain/Entities/Mysql/User.Entity';
-import { JwtModule } from './Jwt.Module';
-import { UserController } from '../Controllers/User.Controller';
-import { UserService } from 'src/Application/Services/User.Service';
+import { UserService } from '../../Application/Services/User.Service.js';
+import { UserController } from '../Controllers/User.Controller.js';
+import { JwtModule } from './Jwt.Module.js';
+import { ConnectionNameMysql } from '../../Domain/Entities/Mysql/Seed/ConnectionNameMysql.js';
+import { RoleUserEntity } from '../../Domain/Entities/Mysql/RoleUser.Entity.js';
+import { DashboardCapabilityUserEntity } from '../../Domain/Entities/Mysql/DashboardCapabilityUser.Entity.js';
+import { DashboardCapabilityEntity } from '../../Domain/Entities/Mysql/DashboardCapability.Entity.js';
+import { RoleEntity } from '../../Domain/Entities/Mysql/Role.Entity.js';
+import { UserEntity } from '../../Domain/Entities/Mysql/User.Entity.js';
 
 @Module({
   imports: [

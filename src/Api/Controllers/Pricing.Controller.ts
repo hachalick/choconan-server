@@ -22,14 +22,14 @@ import {
   UpdateProductPricingDto,
   UpdateProductUnitDto,
   UpdateUnitDto,
-} from '../DTOs/Pricing.Controller.DTO';
+} from '../../Domain/DTOs/Pricing.Controller.DTO.js';
 import {
   CheckExistAccessTokenInHeaderGuard,
   CheckNotExpiresTokenGuard,
-} from '../Guards/Auth.Guard';
-import { DashboardCapabilityGuard } from '../Decorators/DashboardCapability.Decorator';
-import { EDashboardCapability } from 'src/Share/Enum/DashboardCapability.Enum';
-import { PricingService } from 'src/Application/Services/Pricing.Service';
+} from '../Guards/Auth.Guard.js';
+import { DashboardCapabilityGuard } from '../Decorators/DashboardCapability.Decorator.js';
+import { PricingService } from '../../Application/Services/Pricing.Service.js';
+import { EDashboardCapability } from '../../Domain/Enum/DashboardCapability.Enum.js';
 
 @ApiTags('Pricing')
 @Controller('pricing')

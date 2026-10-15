@@ -1,4 +1,4 @@
-export function CallBackListener(port) {
+export function CallBackListener(port: number) {
   console.log('\x1b[36m');
   console.log('powered by nestjs 😏🍾');
   console.log('programmer 👨 H.j');

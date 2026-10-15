@@ -4,14 +4,14 @@ import {
   LoginUserPasswordModel,
   SetSeedDbModel,
   UpdatePasswordUserModel,
-} from '../../../Domain/Models/Auth.Service.Model';
+} from '../../../Domain/Models/Auth.Service.Model.js';
 import {
   CreateRefreshTokenViewModel,
   LoginUserOtpViewModel,
   LoginUserPasswordViewModel,
   SetSeedDbViewModel,
   UpdatePasswordUserViewModel,
-} from '../../../Domain/ViewModels/Auth.Service.ViewModel';
+} from '../../../Domain/ViewModels/Auth.Service.ViewModel.js';
 
 export interface IAuthService {
   SetSeedDb(Param: SetSeedDbModel): Promise<SetSeedDbViewModel>;

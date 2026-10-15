@@ -17,15 +17,15 @@ import {
   DeleteDashboardCapabilityUserDto,
   UpdateProfileDto,
   UpdateUserDto,
-} from '../DTOs/User.Controller.DTO';
+} from '../../Domain/DTOs/User.Controller.DTO.js';
 import { ApiHeader, ApiTags } from '@nestjs/swagger';
-import { DashboardCapabilityGuard } from '../Decorators/DashboardCapability.Decorator';
-import { EDashboardCapability } from 'src/Share/Enum/DashboardCapability.Enum';
+import { DashboardCapabilityGuard } from '../Decorators/DashboardCapability.Decorator.js';
 import {
   CheckExistAccessTokenInHeaderGuard,
   CheckNotExpiresTokenGuard,
-} from '../Guards/Auth.Guard';
-import { UserService } from 'src/Application/Services/User.Service';
+} from '../Guards/Auth.Guard.js';
+import { UserService } from '../../Application/Services/User.Service.js';
+import { EDashboardCapability } from '../../Domain/Enum/DashboardCapability.Enum.js';
 
 @ApiTags('User')
 @Controller('user')
@@ -109,8 +109,8 @@ export class UserController {
   ) {
     return this.UserService.UpdateUser({
       Id: id,
-      Family: body.Family,
-      Name: body.Name,
+      Family: body.Family || '',
+      Name: body.Name || '',
       NationalCode: body.NationalCode,
       Phone: body.Phone,
       Profile: body.Profile,

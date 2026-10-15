@@ -1,9 +1,11 @@
-import { Column, Entity, OneToMany } from 'typeorm';
-import { BaseEntity } from './Seed/Base.Entity';
-import { DashboardCapabilityUserEntity } from './DashboardCapabilityUser.Entity';
+import { Column, Entity, OneToMany, type Relation } from 'typeorm';
+import { BaseEntity } from './Seed/Base.Entity.js';
+import { DashboardCapabilityUserEntity } from './DashboardCapabilityUser.Entity.js';
 
 @Entity('dashboard_capability')
 export class DashboardCapabilityEntity extends BaseEntity {
+  //#region properties
+
   @Column({
     type: 'varchar',
     length: 600,
@@ -14,6 +16,10 @@ export class DashboardCapabilityEntity extends BaseEntity {
   })
   Name: string;
 
+  //#endregion
+
+  //#region relations
+
   @OneToMany(
     () => DashboardCapabilityUserEntity,
     (dashboardCapabilityUser) => dashboardCapabilityUser.User,
@@ -21,5 +27,7 @@ export class DashboardCapabilityEntity extends BaseEntity {
       onDelete: 'CASCADE',
     },
   )
-  DashboardCapabilityUsers: DashboardCapabilityUserEntity[];
+  DashboardCapabilityUsers: Relation<DashboardCapabilityUserEntity[]>;
+
+  //#endregion
 }

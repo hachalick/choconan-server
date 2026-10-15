@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FactorEntity } from 'src/Domain/Entities/Mysql/Factor.Entity';
-import { FactorItemEntity } from 'src/Domain/Entities/Mysql/FactorItem.Entity';
-import { PresentFactorItemEntity } from 'src/Domain/Entities/Mysql/FactorPresentOrder.Entity';
-import { PresentFactorEntity } from 'src/Domain/Entities/Mysql/PresentFactor.Entity';
-import { ProductMenuEntity } from 'src/Domain/Entities/Mysql/ProductMenu.Entity';
-import { ConnectionNameMysql } from 'src/Domain/Entities/Mysql/Seed/ConnectionNameMysql';
-import { UserEntity } from 'src/Domain/Entities/Mysql/User.Entity';
-import { JwtModule } from './Jwt.Module';
-import { OrderController } from '../Controllers/Order.Controller';
-import { OrderService } from 'src/Application/Services/Order.Service';
-import { SocketOrderGateway } from '../Gatway/Order.Gateway';
+import { SocketOrderGateway } from '../Gatway/Order.Gateway.js';
+import { OrderService } from '../../Application/Services/Order.Service.js';
+import { OrderController } from '../Controllers/Order.Controller.js';
+import { JwtModule } from './Jwt.Module.js';
+import { ConnectionNameMysql } from '../../Domain/Entities/Mysql/Seed/ConnectionNameMysql.js';
+import { UserEntity } from '../../Domain/Entities/Mysql/User.Entity.js';
+import { FactorItemEntity } from '../../Domain/Entities/Mysql/FactorItem.Entity.js';
+import { FactorEntity } from '../../Domain/Entities/Mysql/Factor.Entity.js';
+import { PresentFactorItemEntity } from '../../Domain/Entities/Mysql/FactorPresentOrder.Entity.js';
+import { ProductMenuEntity } from '../../Domain/Entities/Mysql/ProductMenu.Entity.js';
+import { PresentFactorEntity } from '../../Domain/Entities/Mysql/PresentFactor.Entity.js';
 
 @Module({
   imports: [

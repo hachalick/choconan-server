@@ -1,5 +1,5 @@
 import { WebSocketGateway } from '@nestjs/websockets';
-import { OrderService } from 'src/Application/Services/Order.Service';
+import { OrderService } from '../../Application/Services/Order.Service.js';
 
 @WebSocketGateway({ cors: '*' })
 export class SocketOrderGateway {

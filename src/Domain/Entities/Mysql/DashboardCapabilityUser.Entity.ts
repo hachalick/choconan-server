@@ -1,14 +1,16 @@
-import { Entity, ManyToOne } from 'typeorm';
-import { BaseEntity } from './Seed/Base.Entity';
-import { DashboardCapabilityEntity } from './DashboardCapability.Entity';
-import { UserEntity } from './User.Entity';
+import { Entity, ManyToOne, type Relation } from 'typeorm';
+import { BaseEntity } from './Seed/Base.Entity.js';
+import { DashboardCapabilityEntity } from './DashboardCapability.Entity.js';
+import { UserEntity } from './User.Entity.js';
 
 @Entity('dashboard_capability_user')
 export class DashboardCapabilityUserEntity extends BaseEntity {
+  //#region relations
+
   @ManyToOne(() => UserEntity, (user) => user.DashboardCapabilityUser, {
     onDelete: 'CASCADE',
   })
-  User: UserEntity;
+  User: Relation<UserEntity>;
 
   @ManyToOne(
     () => DashboardCapabilityEntity,
@@ -17,5 +19,7 @@ export class DashboardCapabilityUserEntity extends BaseEntity {
       onDelete: 'CASCADE',
     },
   )
-  DashboardCapability: DashboardCapabilityEntity;
+  DashboardCapability: Relation<DashboardCapabilityEntity>;
+
+  //#endregion
 }

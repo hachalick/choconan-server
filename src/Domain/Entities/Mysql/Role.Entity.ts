@@ -1,9 +1,11 @@
-import { Column, Entity, OneToMany } from 'typeorm';
-import { BaseEntity } from './Seed/Base.Entity';
-import { RoleUserEntity } from './RoleUser.Entity';
+import { Column, Entity, OneToMany, type Relation } from 'typeorm';
+import { BaseEntity } from './Seed/Base.Entity.js';
+import { RoleUserEntity } from './RoleUser.Entity.js';
 
 @Entity('role')
 export class RoleEntity extends BaseEntity {
+  //#region properties
+
   @Column({
     type: 'varchar',
     length: 200,
@@ -14,8 +16,14 @@ export class RoleEntity extends BaseEntity {
   })
   Name: string;
 
-  @OneToMany(() => RoleUserEntity, (rolesUser) => rolesUser.User, {
+  //#endregion
+
+  //#region relations
+
+  @OneToMany(() => RoleUserEntity, (rolesUser) => rolesUser.Role, {
     onDelete: 'CASCADE',
   })
-  RoleUsers: RoleUserEntity[];
+  RoleUsers: Relation<RoleUserEntity[]>;
+
+  //#endregion
 }

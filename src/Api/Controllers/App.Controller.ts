@@ -6,12 +6,17 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AppService } from 'src/Application/Services/App.Service';
+import { AppService } from '../../Application/Services/App.Service.js';
 
 @ApiTags('App')
 @Controller('app')
 export class AppController {
   constructor(private readonly AppService: AppService) {}
+
+  @Get('time')
+  GetTimeServer() {
+    return new Date();
+  }
 
   @Get('video')
   ReadVideoCategoryList() {

@@ -1,20 +1,6 @@
-import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-  NestMiddleware,
-  Catch,
-  ExceptionFilter,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 import { log } from 'console';
 import { Request, Response, NextFunction } from 'express';
-
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
@@ -52,7 +38,5 @@ export class LoggerMiddleware implements NestMiddleware {
     log(line);
     log('B:', req.body);
     next();
-    // log(line);
-    // log('Res:', res.send);
   }
 }

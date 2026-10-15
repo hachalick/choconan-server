@@ -16,7 +16,7 @@ import {
   UpdateEconomicPackageModel,
   UpdateMenuCategoryModel,
   UpdateMenuProductModel,
-} from '../../../Domain/Models/Menu.Service.Model';
+} from '../../../Domain/Models/Menu.Service.Model.js';
 import {
   CreateContentEconomicPackageViewModel,
   CreateEconomicPackageViewModel,
@@ -35,7 +35,7 @@ import {
   UpdateEconomicPackageViewModel,
   UpdateMenuCategoryViewModel,
   UpdateMenuProductViewModel,
-} from '../../../Domain/ViewModels/Menu.Service.ViewModel';
+} from '../../../Domain/ViewModels/Menu.Service.ViewModel.js';
 
 export interface IMenuService {
   ReadMenuDetail(

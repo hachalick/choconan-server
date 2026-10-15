@@ -1,39 +1,39 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from 'src/Domain/Entities/Mysql/User.Entity';
-import { ConnectionNameMysql } from 'src/Domain/Entities/Mysql/Seed/ConnectionNameMysql';
-import { OtpEntity } from 'src/Domain/Entities/Mysql/Otp.Entity';
-import { Repository } from 'typeorm';
-import { EDashboardCapability } from 'src/Share/Enum/DashboardCapability.Enum';
-import { RoleEntity } from 'src/Domain/Entities/Mysql/Role.Entity';
-import { DashboardCapabilityEntity } from 'src/Domain/Entities/Mysql/DashboardCapability.Entity';
-import { IAuthService } from './Interfaces/Auth.Service.Interface';
-import {
-  CreateRefreshTokenModel,
-  LoginUserOtpModel,
-  LoginUserPasswordModel,
-  SetSeedDbModel,
-  UpdatePasswordUserModel,
-} from '../../Domain/Models/Auth.Service.Model';
+import { IAuthService } from './Interfaces/Auth.Service.Interface.js';
+import { JwtService } from './Jwt.Service.js';
+import { ServiceService } from './Service.Service.js';
+import { UserService } from './User.Service.js';
+import { ConnectionNameMysql } from '../../Domain/Entities/Mysql/Seed/ConnectionNameMysql.js';
+import { UserEntity } from '../../Domain/Entities/Mysql/User.Entity.js';
 import {
   CreateRefreshTokenViewModel,
   LoginUserOtpViewModel,
   LoginUserPasswordViewModel,
   SetSeedDbViewModel,
   UpdatePasswordUserViewModel,
-} from '../../Domain/ViewModels/Auth.Service.ViewModel';
+} from '../../Domain/ViewModels/Auth.Service.ViewModel.js';
+import {
+  CreateRefreshTokenModel,
+  LoginUserOtpModel,
+  LoginUserPasswordModel,
+  SetSeedDbModel,
+  UpdatePasswordUserModel,
+} from '../../Domain/Models/Auth.Service.Model.js';
+import { OtpEntity } from '../../Domain/Entities/Mysql/Otp.Entity.js';
+import { Repository } from 'typeorm';
+import { DashboardCapabilityEntity } from '../../Domain/Entities/Mysql/DashboardCapability.Entity.js';
+import { RoleEntity } from '../../Domain/Entities/Mysql/Role.Entity.js';
+import { EDashboardCapability } from '../../Domain/Enum/DashboardCapability.Enum.js';
 import {
   ApplicationConfigurationKeys,
   ApplicationConfigurationValues,
-} from 'src/Share/Configuration/Parameter/Application.Configuration';
-import { Hashing } from 'src/Share/Utils/Hashing';
-import { HttpExceptionCustom } from 'src/Api/Exceptions/HttpExceptionCustom';
-import { HttpExceptionMessageCustom } from 'src/Share/Constants/HttpExceptionMessageCustom';
-import { Random } from 'src/Share/Utils/Random';
-import { JwtService } from './Jwt.Service';
-import { UserService } from './User.Service';
-import { ServiceService } from './Service.Service';
+} from '../../Persistence/Configuration/Parameter/Application.Configuration.js';
+import { Hashing } from '../../Share/Utils/Hashing.js';
+import { Random } from '../../Share/Utils/Random.js';
+import { HttpExceptionMessageCustom } from '../../Domain/Constants/HttpExceptionMessageCustom.js';
+import { HttpExceptionCustom } from '../../Api/Exceptions/HttpExceptionCustom.js';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -72,9 +72,13 @@ export class AuthService implements IAuthService {
       where: { Name: 'پشتیبان' },
     });
 
+    if (!findRole) throw new Error();
+
     const findUser = await this.UserRepository.findOne({
       where: { NationalCode, Phone: '9353790881' },
     });
+
+    if (!findUser) throw new Error();
 
     await this.UserService.CreateRoleUser({
       RoleId: findRole.Guid,
@@ -315,704 +319,1145 @@ export class AuthService implements IAuthService {
 
     //#region DashboardCapabilityId:
 
+    let dashboardCapability: DashboardCapabilityEntity | null;
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_ACCOUNTING_ENTER,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
+    await this.UserService.CreateDashboardCapabilityUser({
+      DashboardCapabilityId: dashboardCapability.Guid,
+      UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_ACCOUNTING_EXIT,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.CREATE_ACCOUNTING_ENTER,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_BLOG,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.CREATE_ACCOUNTING_EXIT,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_ECONOMIC_PACKAGE,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.CREATE_BLOG },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_FACTOR,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.CREATE_ECONOMIC_PACKAGE,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_IMAGE,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.CREATE_FACTOR },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_MENU_CATEGORY,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.CREATE_IMAGE },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_MENU_PRODUCT,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.CREATE_MENU_CATEGORY,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_ORDER,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.CREATE_MENU_PRODUCT,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_ORDER_LOCATION,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.CREATE_ORDER },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_WAREHOUSE_ENTER,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.CREATE_ORDER_LOCATION,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_WAREHOUSE_EXIT,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.CREATE_WAREHOUSE_ENTER,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_USER,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.CREATE_WAREHOUSE_EXIT,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_ACCOUNTING_EXIT,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.CREATE_USER },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_BLOG,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.DELETE_ACCOUNTING_EXIT,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_ECONOMIC_PACKAGE,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.DELETE_BLOG },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_FACTOR,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.DELETE_ECONOMIC_PACKAGE,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_IMAGE,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.DELETE_FACTOR },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_MENU_CATEGORY,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.DELETE_IMAGE },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_MENU_PRODUCT,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.DELETE_MENU_CATEGORY,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_ORDER,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.DELETE_MENU_PRODUCT,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_ORDER_LOCATION,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.DELETE_ORDER },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_WAREHOUSE_ENTER,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.DELETE_ORDER_LOCATION,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_WAREHOUSE_EXIT,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.DELETE_WAREHOUSE_ENTER,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_USER,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.DELETE_WAREHOUSE_EXIT,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.EDIT_PASSWORD,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.DELETE_USER },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.EDIT_PROFILE,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.EDIT_PASSWORD },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_ACCOUNTING_ENTER,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.EDIT_PROFILE },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_ACCOUNTING_EXIT,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.READ_ACCOUNTING_ENTER,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_ALL_ONLINE_SHOP,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.READ_ACCOUNTING_EXIT,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_USER,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.READ_ALL_ONLINE_SHOP,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_BLOG,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.READ_USER },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_ECONOMIC_PACKAGE,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.READ_BLOG },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_FACTOR,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.READ_ECONOMIC_PACKAGE,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_IMAGE,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.READ_FACTOR },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_MENU_CATEGORY,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.READ_IMAGE },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_MENU_PRODUCT,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.READ_MENU_CATEGORY,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_ORDER,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.READ_MENU_PRODUCT,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_ORDER_LOCATION,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.READ_ORDER },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_SNAP_ONLINE_SHOP,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.READ_ORDER_LOCATION,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_TAPSI_ONLINE_SHOP,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.READ_SNAP_ONLINE_SHOP,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_WAREHOUSE_ENTER,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.READ_TAPSI_ONLINE_SHOP,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_WAREHOUSE_EXIT,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.READ_WAREHOUSE_ENTER,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_ACCOUNTING_EXIT,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.READ_WAREHOUSE_EXIT,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_BLOG,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.UPDATE_ACCOUNTING_EXIT,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_ECONOMIC_PACKAGE,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.UPDATE_BLOG },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_FACTOR,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.UPDATE_ECONOMIC_PACKAGE,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_FACTOR,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.UPDATE_FACTOR },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_MENU_CATEGORY,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.UPDATE_MENU_CATEGORY,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_MENU_PRODUCT,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.UPDATE_MENU_PRODUCT,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_ORDER,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.UPDATE_ORDER },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_ORDER_LOCATION,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.UPDATE_ORDER_LOCATION,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_USER,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.UPDATE_USER },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_WAREHOUSE_ENTER,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.UPDATE_WAREHOUSE_ENTER,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_WAREHOUSE_EXIT,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.UPDATE_WAREHOUSE_EXIT,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_ROLE,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.CREATE_ROLE },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_ROLE,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.DELETE_ROLE },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_ROLE,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.UPDATE_ROLE },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_ROLE,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: { Name: EDashboardCapability.READ_ROLE },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_UNIT_PRICING,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.READ_UNIT_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_UNIT_PRICING,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.CREATE_UNIT_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_UNIT_PRICING,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.UPDATE_UNIT_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_UNIT_PRICING,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.DELETE_UNIT_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.READ_PRODUCT_PRICING,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.READ_PRODUCT_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_PRODUCT_PRICING,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.CREATE_PRODUCT_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_PRODUCT_PRICING,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.UPDATE_PRODUCT_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_PRODUCT_PRICING,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.DELETE_PRODUCT_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_PRODUCT_UNIT_PRICING,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.CREATE_PRODUCT_UNIT_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_PRODUCT_UNIT_PRICING,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.UPDATE_PRODUCT_UNIT_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_PRODUCT_UNIT_PRICING,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.DELETE_PRODUCT_UNIT_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_DETAIL_PRODUCT_UNIT_PRICING,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.CREATE_DETAIL_PRODUCT_UNIT_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_DETAIL_PRODUCT_UNIT_PRICING,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.UPDATE_DETAIL_PRODUCT_UNIT_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_DETAIL_PRODUCT_UNIT_PRICING,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.DELETE_DETAIL_PRODUCT_UNIT_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.CREATE_COST_PRICING,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.CREATE_COST_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.UPDATE_COST_PRICING,
+      },
+    });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.UPDATE_COST_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
+    });
+
+    // ------------------------------------------
+
+    dashboardCapability = await this.DashboardCapabilityRepository.findOne({
+      where: {
+        Name: EDashboardCapability.DELETE_COST_PRICING,
+      },
     });
+
+    if (!dashboardCapability) throw new Error();
+
     await this.UserService.CreateDashboardCapabilityUser({
-      DashboardCapabilityId: (
-        await this.DashboardCapabilityRepository.findOne({
-          where: {
-            Name: EDashboardCapability.DELETE_COST_PRICING,
-          },
-        })
-      ).Guid,
+      DashboardCapabilityId: dashboardCapability.Guid,
       UserId: findUser.Guid,
     });
 
@@ -1026,9 +1471,10 @@ export class AuthService implements IAuthService {
   async LoginUserPassword(
     Param: LoginUserPasswordModel,
   ): Promise<LoginUserPasswordViewModel> {
-    const key = this.ConfigService.get<string>(
-      `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.TOKEN_HASH_PASSWORD}`,
-    );
+    const key =
+      this.ConfigService.get<string>(
+        `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.TOKEN_HASH_PASSWORD}`,
+      ) || '';
     const hashPass = Hashing.Password(Param.Password, key);
     const otp = Random.Otp(6);
     const currentDate = new Date();
@@ -1130,9 +1576,10 @@ export class AuthService implements IAuthService {
   async UpdatePasswordUser(
     Param: UpdatePasswordUserModel,
   ): Promise<UpdatePasswordUserViewModel> {
-    const key = this.ConfigService.get<string>(
-      `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.TOKEN_HASH_PASSWORD}`,
-    );
+    const key =
+      this.ConfigService.get<string>(
+        `${ApplicationConfigurationKeys.APPLICATION}.${ApplicationConfigurationValues.TOKEN_HASH_PASSWORD}`,
+      ) || '';
 
     const payload = await this.JwtService.VerifyAccessToken(Param.AccessToken);
 

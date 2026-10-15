@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { WelcomeUserDto } from '../DTOs/Service.Controller.DTO';
+import { WelcomeUserDto } from '../../Domain/DTOs/Service.Controller.DTO.js';
 import { ApiTags } from '@nestjs/swagger';
-import { ServiceService } from 'src/Application/Services/Service.Service';
+import { ServiceService } from '../../Application/Services/Service.Service.js';
 
 @ApiTags('Service')
 @Controller('service')

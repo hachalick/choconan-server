@@ -3,7 +3,7 @@ import {
   BaseDeleteViewModel,
   BaseReadViewModel,
   BaseUpdateViewModel,
-} from 'src/Domain/ViewModels/Seed/Base.Service.ViewModel';
+} from './Seed/Base.Service.ViewModel.js';
 
 //#region User
 

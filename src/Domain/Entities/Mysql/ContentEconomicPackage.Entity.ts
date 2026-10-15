@@ -1,10 +1,12 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { ProductMenuEntity } from './ProductMenu.Entity';
-import { BaseEntity } from './Seed/Base.Entity';
-import { EconomicPackageEntity } from './EconomicPackage.Entity';
+import { Column, Entity, JoinColumn, ManyToOne, type Relation } from 'typeorm';
+import { ProductMenuEntity } from './ProductMenu.Entity.js';
+import { BaseEntity } from './Seed/Base.Entity.js';
+import { EconomicPackageEntity } from './EconomicPackage.Entity.js';
 
 @Entity('content_economic_package')
 export class ContentEconomicPackageEntity extends BaseEntity {
+  //#region properties
+
   @Column({
     type: 'int',
     nullable: false,
@@ -12,12 +14,16 @@ export class ContentEconomicPackageEntity extends BaseEntity {
   })
   Count: number;
 
+  //#endregion
+
+  //#region relations
+
   @ManyToOne(
     () => EconomicPackageEntity,
     (economicPackage) => economicPackage.ContentEconomicPackages,
     { onDelete: 'CASCADE' },
   )
-  EconomicPackage: EconomicPackageEntity;
+  EconomicPackage: Relation<EconomicPackageEntity>;
 
   @ManyToOne(
     () => ProductMenuEntity,
@@ -25,5 +31,7 @@ export class ContentEconomicPackageEntity extends BaseEntity {
     { cascade: true },
   )
   @JoinColumn()
-  ProductMenu: ProductMenuEntity;
+  ProductMenu: Relation<ProductMenuEntity>;
+
+  //#endregion
 }
