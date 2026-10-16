@@ -196,7 +196,9 @@ export class PricingService implements IPricingService {
   //#region clean up ratio product unit
 
   private async CheckHaveRatioProductUnit() {
-    const listProductPricing = await this.productPricingRepository.find();
+    const listProductPricing = await this.productPricingRepository.find({
+      select: { Id: true },
+    });
 
     for (const productPricing of listProductPricing) {
       await this.ResetHaveRatioProductUnit(productPricing.Id);
@@ -304,31 +306,19 @@ export class PricingService implements IPricingService {
     if (!product2) throw new Error();
 
     for (const clean of cleanList) {
-      const findUnitPricing1 = await this.unitPricingRepository.findOne({
-        where: { Id: clean.Id[0] },
-      });
-
-      if (!findUnitPricing1) continue;
-
-      const findUnitPricing2 = await this.unitPricingRepository.findOne({
-        where: { Id: clean.Id[1] },
-      });
-
-      if (!findUnitPricing2) continue;
-
       const findProductUnit1 = await this.productUnitPricingRepository.findOne({
         where: {
-          ProductPricing: product2,
-          UnitPricing: findUnitPricing1,
+          ProductPricing: { Id: product2.Id },
+          UnitPricing: { Id: clean.Id[0] },
         },
       });
-
+      
       if (!findProductUnit1) continue;
-
+      
       const findProductUnit2 = await this.productUnitPricingRepository.findOne({
         where: {
-          ProductPricing: product2,
-          UnitPricing: findUnitPricing2,
+          ProductPricing: { Id: product2.Id },
+          UnitPricing: { Id: clean.Id[1] },
         },
       });
 

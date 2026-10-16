@@ -127,7 +127,7 @@ export class MenuController {
     });
   }
 
-  @Post('product/:id')
+  @Post('product')
   @ApiHeader({ name: 'access_token', required: true })
   @DashboardCapabilityGuard(
     'access_token',

@@ -333,14 +333,14 @@ export class OrderService implements IOrderService {
           FactorDate: 'ASC',
         },
       });
-      
+
       const lastFactor = await this.FactorRepository.findOne({
         where: {},
         order: {
           FactorDate: 'DESC',
         },
       });
-      
+
       if (firstFactor && lastFactor) {
         const diffMonths =
           (lastFactor.FactorDate.getFullYear() -
@@ -354,7 +354,7 @@ export class OrderService implements IOrderService {
         Param.Count = 0;
       }
     }
-    
+
     const result: ReadOrderMonthlyListViewModel[] = [];
 
     let cursor = moment().startOf('jMonth');
@@ -478,8 +478,6 @@ export class OrderService implements IOrderService {
       relations: { FactorItems: true },
     });
 
-    res.forEach((val) => console.log(val.FactorDate));
-
     return res.map((factor) => ({
       Id: factor.Guid,
       CustomerMobile: factor.CustomerMobile,
@@ -488,14 +486,13 @@ export class OrderService implements IOrderService {
       IsPay: factor.IsPay,
       Location: factor.Location,
       Tax: factor.Tax,
-      FactorItems: [],
-      // FactorItems: factor.FactorItems.map((factorItem) => ({
-      //   Id: factorItem.Guid,
-      //   ProductCount: factorItem.ProductCount,
-      //   ProductDiscount: factorItem.ProductDiscount,
-      //   ProductName: factorItem.ProductName,
-      //   ProductPrice: factorItem.ProductPrice,
-      // })),
+      FactorItems: factor.FactorItems.map((factorItem) => ({
+        Id: factorItem.Guid,
+        ProductCount: factorItem.ProductCount,
+        ProductDiscount: factorItem.ProductDiscount,
+        ProductName: factorItem.ProductName,
+        ProductPrice: factorItem.ProductPrice,
+      })),
     }));
   }
 
@@ -532,55 +529,22 @@ export class OrderService implements IOrderService {
     };
   }
 
-  // async ReorderFactorsOfDay(targetDate: Date): Promise<void> {
-  //   // ۱. محاسبه‌ی ابتدای روز و ابتدای روز بعد
-  //   const startOfDay = new Date(
-  //     targetDate.getFullYear(),
-  //     targetDate.getMonth(),
-  //     targetDate.getDate(),
-  //     0,
-  //     0,
-  //     0,
-  //     0,
-  //   );
+  private async CreateFactorNumber(date: Date): Promise<number> {
+    const startDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      0,
+      0,
+      0,
+      0,
+    );
 
-  //   const startOfNextDay = new Date(startOfDay);
-  //   startOfNextDay.setDate(startOfNextDay.getDate() + 1);
-
-  //   // ۲. گرفتن فاکتورهای اون روز با ترتیب FactorDate
-  //   const factors = await this.factorRepository.find({
-  //     where: {
-  //       FactorDate: And(MoreThanOrEqual(startOfDay), LessThan(startOfNextDay)),
-  //     },
-  //     order: { FactorDate: 'ASC' }, // ⬅️ مرتب‌سازی توی DB
-  //   });
-
-  //   if (factors.length === 0) return;
-
-  //   // ۳. آپدیت شماره‌ها
-  //   let counter = 1;
-  //   for (const factor of factors) {
-  //     await this.factorRepository.update(
-  //       { Id: factor.Id },
-  //       { FactorNumber: counter },
-  //     );
-  //     counter++;
-  //   }
-  // }
-
-  async CreateOrder(Param: CreateOrderModel): Promise<CreateOrderViewModel> {
-    const nowDate = new Date();
-    const nowYear = nowDate.getFullYear();
-    const nowMonth = nowDate.getMonth() + 1;
-    const nowDay = nowDate.getDate() + 1;
-    const endToday = new Date(
-      `${nowYear}/${nowMonth}/${nowDay} 00:00:00`,
-    ).getTime();
-    const startToday = endToday - 1000 * 60 * 60 * 24;
+    const endDate = new Date(startDate.getTime() + 1000 * 60 * 60 * 24);
 
     const factors = await this.FactorRepository.find({
       where: {
-        FactorDate: Between(new Date(startToday), new Date(endToday)),
+        FactorDate: Between(startDate, endDate),
       },
       select: { FactorNumber: true },
       order: { FactorNumber: 'ASC' },
@@ -588,15 +552,18 @@ export class OrderService implements IOrderService {
 
     let counterFactor = 1;
 
-    for (const item of factors) {
-      if (item.FactorNumber != counterFactor) {
-        break;
-      }
+    for (const factor of factors) {
+      if (factor.FactorNumber != counterFactor) break;
       counterFactor++;
     }
 
+    return counterFactor;
+  }
+
+  async CreateOrder(Param: CreateOrderModel): Promise<CreateOrderViewModel> {
+    const FactorNumber = await this.CreateFactorNumber(new Date());
     const newFactor = this.FactorRepository.create({
-      FactorNumber: counterFactor,
+      FactorNumber,
       Tax: 0,
       IsPay: false,
       Location: '',
@@ -644,36 +611,6 @@ export class OrderService implements IOrderService {
       );
     }
 
-    if (findFactor.FactorDate != enDateFactor) {
-      const nowYear = enDateFactor.getFullYear();
-      const nowMonth = enDateFactor.getMonth() + 1;
-      const nowDay = enDateFactor.getDate() + 1;
-
-      const endToday = new Date(
-        `${nowYear}/${nowMonth}/${nowDay} 00:00:00`,
-      ).getTime();
-      const startToday = endToday - 1000 * 60 * 60 * 24;
-
-      const factors = await this.FactorRepository.find({
-        where: {
-          FactorDate: Between(new Date(startToday), new Date(endToday)),
-        },
-        select: { FactorNumber: true },
-        order: { FactorNumber: 'ASC' },
-      });
-
-      let counterFactor = 1;
-
-      for (const item of factors) {
-        if (item.FactorNumber != counterFactor) {
-          break;
-        }
-        counterFactor++;
-      }
-
-      findFactor.FactorNumber = counterFactor;
-    }
-
     const res = await this.FactorRepository.update(
       { Guid: Param.Id },
       {
@@ -681,7 +618,6 @@ export class OrderService implements IOrderService {
         Location: Param.Location,
         IsPay: Param.IsPay,
         Tax: Param.Tax,
-        FactorNumber: findFactor.FactorNumber,
         FactorDate: enDateFactor,
       },
     );
@@ -713,6 +649,39 @@ export class OrderService implements IOrderService {
     return { Update: (res.affected || 0) > 0 };
   }
 
+  private async ReorderFactorNumber(date: Date) {
+    const startDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      0,
+      0,
+      0,
+      0,
+    );
+
+    const endDate = new Date(startDate.getTime() + 1000 * 60 * 60 * 24);
+
+    const factors = await this.FactorRepository.find({
+      where: {
+        FactorDate: Between(startDate, endDate),
+      },
+      select: { Id: true, FactorNumber: true },
+      order: { FactorNumber: 'ASC' },
+    });
+
+    let counterFactor = 0;
+
+    for (const factor of factors) {
+      counterFactor++;
+
+      await this.FactorRepository.update(
+        { Id: factor.Id },
+        { FactorNumber: counterFactor },
+      );
+    }
+  }
+
   async DeleteOrder(Param: DeleteOrderModel): Promise<DeleteOrderViewModel> {
     const findFactor = await this.FactorRepository.findOne({
       where: { Guid: Param.Id },
@@ -725,35 +694,9 @@ export class OrderService implements IOrderService {
       );
     }
 
-    const findFactorYear = findFactor.FactorDate.getFullYear();
-    const findFactorMonth = findFactor.FactorDate.getMonth() + 1;
-    const findFactorDay = findFactor.FactorDate.getDate() + 1;
-    const endFactorDate = new Date(
-      `${findFactorYear}/${findFactorMonth}/${findFactorDay} 00:00:00`,
-    ).getTime();
-    const startFactorDate = endFactorDate - 1000 * 60 * 60 * 24;
-
     const res = await this.FactorRepository.delete({ Guid: Param.Id });
 
-    const listFactor = await this.FactorRepository.find({
-      where: {
-        FactorDate: Between(new Date(startFactorDate), new Date(endFactorDate)),
-      },
-      order: { FactorDate: 'ASC' },
-    });
-
-    let counter = 1;
-
-    for (const item of listFactor) {
-      await this.FactorRepository.update(
-        { Id: item.Id },
-        {
-          FactorNumber: counter,
-        },
-      );
-
-      counter++;
-    }
+    await this.ReorderFactorNumber(findFactor.FactorDate);
 
     return { Delete: (res.affected || 0) > 0 };
   }

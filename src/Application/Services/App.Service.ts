@@ -201,10 +201,6 @@ export class AppService implements IAppService {
         order: { FactorDate: 'ASC' },
       });
 
-      console.log(
-        `d ${currentDay.toISOString().slice(0, 10)}: total f ${listFactor.length}`,
-      );
-
       let counter = 1;
       const updates = listFactor.map((factor) => ({
         Id: factor.Id,

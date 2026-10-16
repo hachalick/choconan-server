@@ -133,7 +133,7 @@ export class OrderController {
   @UseGuards(CheckNotExpiresTokenGuard)
   @UseGuards(CheckExistAccessTokenInHeaderGuard)
   ReadOrderList(
-    // @Headers('access_token') AccessToken: string,
+    @Headers('access_token') AccessToken: string,
     @Query('EndDay') EndDay?: string,
     @Query('StartDay') StartDay?: string,
     @Query('IsPay', new ParseBoolPipe({ optional: true })) IsPay?: boolean,
@@ -146,14 +146,14 @@ export class OrderController {
   }
 
   @Get('order/monthly')
-  // @ApiHeader({ name: 'access_token', required: true })
+  @ApiHeader({ name: 'access_token', required: true })
   @ApiQuery({ name: 'Count', required: false })
   @ApiQuery({ name: 'Space', required: false })
-  // @DashboardCapabilityGuard('access_token', EDashboardCapability.READ_ORDER)
-  // @UseGuards(CheckNotExpiresTokenGuard)
-  // @UseGuards(CheckExistAccessTokenInHeaderGuard)
+  @DashboardCapabilityGuard('access_token', EDashboardCapability.READ_ORDER)
+  @UseGuards(CheckNotExpiresTokenGuard)
+  @UseGuards(CheckExistAccessTokenInHeaderGuard)
   ReadOrderMonthlyList(
-    // @Headers('access_token') AccessToken: string,
+    @Headers('access_token') AccessToken: string,
     @Query('Count', new ParseIntPipe({ optional: true })) Count: number,
     @Query('Space', new ParseIntPipe({ optional: true })) Space: number,
   ) {
