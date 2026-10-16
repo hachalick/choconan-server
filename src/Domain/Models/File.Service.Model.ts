@@ -1,3 +1,7 @@
+export class DownloadFileBackupExcelModel {
+  AccessToken: string;
+}
+
 export class DownloadFileMenuExcelModel {}
 
 export class DeleteFileImageModel {

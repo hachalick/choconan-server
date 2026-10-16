@@ -325,6 +325,36 @@ export class OrderService implements IOrderService {
   async ReadOrderMonthlyList(
     Param: ReadOrderMonthlyListModel,
   ): Promise<ReadOrderMonthlyListViewModel[]> {
+    Param.Space = Param.Space || 0;
+    if (!Param.Count) {
+      const firstFactor = await this.FactorRepository.findOne({
+        where: {},
+        order: {
+          FactorDate: 'ASC',
+        },
+      });
+      
+      const lastFactor = await this.FactorRepository.findOne({
+        where: {},
+        order: {
+          FactorDate: 'DESC',
+        },
+      });
+      
+      if (firstFactor && lastFactor) {
+        const diffMonths =
+          (lastFactor.FactorDate.getFullYear() -
+            firstFactor.FactorDate.getFullYear()) *
+            12 +
+          (lastFactor.FactorDate.getMonth() -
+            firstFactor.FactorDate.getMonth());
+
+        Param.Count = diffMonths + 1;
+      } else {
+        Param.Count = 0;
+      }
+    }
+    
     const result: ReadOrderMonthlyListViewModel[] = [];
 
     let cursor = moment().startOf('jMonth');
@@ -386,13 +416,13 @@ export class OrderService implements IOrderService {
       }
 
       result.push({
-        month: `${year}/${month}`,
-        totalFactors: factors.length,
-        averageFactors,
-        totalItems,
-        averageItems,
-        totalPrice,
-        averagePrice,
+        Month: `${year}/${month}`,
+        TotalFactors: factors.length,
+        AverageFactors: Math.floor(averageFactors),
+        TotalItems: Math.floor(totalItems),
+        AverageItems: Math.floor(averageItems),
+        TotalPrice: Math.floor(totalPrice),
+        AveragePrice: Math.floor(averagePrice),
       });
     }
 

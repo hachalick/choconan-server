@@ -26,23 +26,47 @@ import { UploadFileDto } from '../../Domain/DTOs/File.Controller.DTO.js';
 import { FileService } from '../../Application/Services/File.Service.js';
 import { EDashboardCapability } from '../../Domain/Enum/DashboardCapability.Enum.js';
 import { DashboardCapabilityGuard } from '../Decorators/DashboardCapability.Decorator.js';
-import { CheckExistAccessTokenInHeaderGuard, CheckNotExpiresTokenGuard } from '../Guards/Auth.Guard.js';
+import {
+  CheckExistAccessTokenInHeaderGuard,
+  CheckNotExpiresTokenGuard,
+} from '../Guards/Auth.Guard.js';
 
 @ApiTags('File')
 @Controller('file')
 export class FileController {
   constructor(private readonly FileService: FileService) {}
 
-  @Get('download/excel/menu')
-  async DownloadFileMenuExcel(@Res() res: Response) {
-    const buffer = await this.FileService.DownloadFileMenuExcel(res);
+  @Get('download/excel/backup')
+  @ApiHeader({ name: 'access_token', required: true })
+  @DashboardCapabilityGuard('access_token', EDashboardCapability.CREATE_IMAGE)
+  @UseGuards(CheckNotExpiresTokenGuard)
+  @UseGuards(CheckExistAccessTokenInHeaderGuard)
+  async DownloadFileBackupExcel(
+    @Res() Res: Response,
+    @Headers('access_token') AccessToken: string,
+  ) {
+    const buffer = await this.FileService.DownloadFileBackupExcel({
+      AccessToken: '',
+    });
 
-    res.setHeader(
+    Res.setHeader(
       'Content-Type',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     );
-    res.setHeader('Content-Disposition', 'attachment; filename=report.xlsx');
-    res.end(buffer.Download);
+    Res.setHeader('Content-Disposition', 'attachment; filename=report.xlsx');
+    Res.end(buffer.Download);
+  }
+
+  @Get('download/excel/menu')
+  async DownloadFileMenuExcel(@Res() Res: Response) {
+    const buffer = await this.FileService.DownloadFileMenuExcel({});
+
+    Res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    Res.setHeader('Content-Disposition', 'attachment; filename=report.xlsx');
+    Res.end(buffer.Download);
   }
 
   @Get('image')

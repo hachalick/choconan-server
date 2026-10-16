@@ -21,9 +21,11 @@ import {
 import { ApiHeader, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { DashboardCapabilityGuard } from '../Decorators/DashboardCapability.Decorator.js';
 import { OrderService } from '../../Application/Services/Order.Service.js';
-import { CheckExistAccessTokenInHeaderGuard, CheckNotExpiresTokenGuard } from '../Guards/Auth.Guard.js';
+import {
+  CheckExistAccessTokenInHeaderGuard,
+  CheckNotExpiresTokenGuard,
+} from '../Guards/Auth.Guard.js';
 import { EDashboardCapability } from '../../Domain/Enum/DashboardCapability.Enum.js';
-
 
 @ApiTags('Order')
 @Controller('order')
@@ -144,14 +146,16 @@ export class OrderController {
   }
 
   @Get('order/monthly')
-  @ApiHeader({ name: 'access_token', required: true })
-  @DashboardCapabilityGuard('access_token', EDashboardCapability.READ_ORDER)
-  @UseGuards(CheckNotExpiresTokenGuard)
-  @UseGuards(CheckExistAccessTokenInHeaderGuard)
+  // @ApiHeader({ name: 'access_token', required: true })
+  @ApiQuery({ name: 'Count', required: false })
+  @ApiQuery({ name: 'Space', required: false })
+  // @DashboardCapabilityGuard('access_token', EDashboardCapability.READ_ORDER)
+  // @UseGuards(CheckNotExpiresTokenGuard)
+  // @UseGuards(CheckExistAccessTokenInHeaderGuard)
   ReadOrderMonthlyList(
-    @Headers('access_token') AccessToken: string,
-    @Query('Count', ParseIntPipe) Count: number,
-    @Query('Space', ParseIntPipe) Space: number,
+    // @Headers('access_token') AccessToken: string,
+    @Query('Count', new ParseIntPipe({ optional: true })) Count: number,
+    @Query('Space', new ParseIntPipe({ optional: true })) Space: number,
   ) {
     return this.OrderService.ReadOrderMonthlyList({
       Count,

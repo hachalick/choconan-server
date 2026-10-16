@@ -6,6 +6,8 @@ import {
   BaseUploadViewModel,
 } from './Seed/Base.Service.ViewModel.js';
 
+export class DownloadFileBackupExcelViewModel extends BaseDownloadViewModel {}
+
 export class DownloadFileMenuExcelViewModel extends BaseDownloadViewModel {}
 
 export class DeleteFileImageViewModel extends BaseDeleteViewModel {}

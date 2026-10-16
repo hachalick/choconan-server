@@ -52,13 +52,13 @@ export class ReadOrderTableDetailViewModel extends BaseReadViewModel {
 }
 
 export class ReadOrderMonthlyListViewModel {
-  month: string;
-  totalFactors: any;
-  averageFactors: number;
-  totalItems: number;
-  averageItems: number;
-  totalPrice: number;
-  averagePrice: number;
+  Month: string;
+  TotalFactors: any;
+  AverageFactors: number;
+  TotalItems: number;
+  AverageItems: number;
+  TotalPrice: number;
+  AveragePrice: number;
 }
 
 export class CreateOrderTableViewModel extends BaseCreateViewModel {}

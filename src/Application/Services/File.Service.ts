@@ -1,17 +1,19 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { writeFileSync, unlinkSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
-import { Raw, Repository } from 'typeorm';
+import { DataSource, Raw, Repository } from 'typeorm';
 import * as XLSX from 'xlsx';
 import {
   DeleteFileImageModel,
+  DownloadFileBackupExcelModel,
   DownloadFileMenuExcelModel,
   ReadFileImageListModel,
   UploadFileImageModel,
 } from '../../Domain/Models/File.Service.Model.js';
 import {
   DeleteFileImageViewModel,
+  DownloadFileBackupExcelViewModel,
   DownloadFileMenuExcelViewModel,
   ReadFileImageListViewModel,
   UploadFileImageViewModel,
@@ -23,6 +25,7 @@ import { FileEntity } from '../../Domain/Entities/Mysql/File.Entity.js';
 import { InnerRoute } from '../../Domain/Constants/InnerRoute.Constants.js';
 import { HttpExceptionMessageCustom } from '../../Domain/Constants/HttpExceptionMessageCustom.js';
 import { HttpExceptionCustom } from '../../Api/Exceptions/HttpExceptionCustom.js';
+import { EntitiesMySqlGlobal } from '../../Persistence/Configuration/Sql/Entities.MysqlGlobal.js';
 
 @Injectable()
 export class FileService implements IFileService {
@@ -32,7 +35,49 @@ export class FileService implements IFileService {
 
     @InjectRepository(FileEntity, ConnectionNameMysql.global)
     private readonly FileRepository: Repository<FileEntity>,
+
+    @InjectDataSource(ConnectionNameMysql.global)
+    private readonly dataSource: DataSource,
   ) {}
+
+  async DownloadFileBackupExcel(
+    Param: DownloadFileBackupExcelModel,
+  ): Promise<DownloadFileBackupExcelViewModel> {
+    const wb = XLSX.utils.book_new();
+
+    for (const entityModel of EntitiesMySqlGlobal) {
+      const repository = this.dataSource.getRepository(entityModel);
+
+      const countRows = await repository.count();
+      const allRows: any[] = [];
+
+      for (let rowIndex = 0; rowIndex < countRows; rowIndex++) {
+        const [rowEntity] = await repository.find({
+          take: 1,
+          skip: rowIndex,
+        });
+
+        if (rowEntity) {
+          allRows.push(rowEntity);
+        }
+      }
+
+      if (!allRows.length) continue;
+
+      const metadata = this.dataSource.getMetadata(entityModel);
+      const sheetName = (metadata.tableName || metadata.name).substring(0, 31);
+
+      const ws = XLSX.utils.json_to_sheet(allRows);
+      XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    }
+
+    const buffer = XLSX.write(wb, {
+      bookType: 'xlsx',
+      type: 'buffer',
+    });
+
+    return { Download: buffer };
+  }
 
   async DownloadFileMenuExcel(
     Param: DownloadFileMenuExcelModel,
